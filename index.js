@@ -14,6 +14,7 @@ require('dotenv').config();
 // const evaluationRoutes = require ('./routes/evaluationRoute');
 // const deliverableRoutes = require ('./routes/deliverableRoute');
 const panelRoutes = require('./routes/createPanelRoute');
+const studentRoutes = require ('./routes/studentRoute'); 
 
 // const gitLabAPIRoutes = require ('./routes/gitLabRepoAPIRoute.js');
 
@@ -29,6 +30,8 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
 app.use('/panel', panelRoutes);
+app.use('/student', studentRoutes);
+
 // app.use('/projects', projectRoutes);
 // app.use('/deliverables', deliverableRoutes);
 // app.use('/evaluations', evaluationRoutes);

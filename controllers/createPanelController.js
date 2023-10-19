@@ -1,5 +1,6 @@
 
 const Panel = require("../models/createPanelModel.js");
+const assignPanel = require("../models/panelAssignmentModel.js")
 
 const createPanel = (req, res) => {
     console.log("create panel route")
@@ -66,10 +67,38 @@ getAllPanels = (req, res) => {
 
 
 
+        const AssignPanel = (req, res) => {
+            console.log("create panel route", req.body.studentIds, req.body.panelId);
+          
+            // Validate request
+            if (!req.body.studentIds || !req.body.panelId) {
+              res.status(400).send({ message: "Content can not be empty!" });
+              return;
+            }
+          
+            // Create a new AssignmentPanel document
+            const assignment = new assignPanel({
+              studentIds: req.body.studentIds,
+              panelId: req.body.panelId,
+            });
+          
+            // Save the document to the database
+            assignment.save()
+              .then((data) => {
+                res.status(201).send(data); // 201 for resource created
+              })
+              .catch((err) => {
+                res.status(500).send({
+                  message: err.message || "Some error occurred while creating the AssignmentPanel.",
+                });
+              });
+          };
+
     module.exports = {
 
          createPanel,
          getAllPanels,
-        deletePanelByID
+        deletePanelByID,
+        AssignPanel
 
     }
