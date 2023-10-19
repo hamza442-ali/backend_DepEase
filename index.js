@@ -13,8 +13,9 @@ require('dotenv').config();
 // const userRoutes = require('./routes/userRoute');
 // const evaluationRoutes = require ('./routes/evaluationRoute');
 // const deliverableRoutes = require ('./routes/deliverableRoute');
+const panelRoutes = require('./routes/createPanelRoute');
 
-const gitLabAPIRoutes = require ('./routes/gitLabRepoAPIRoute.js');
+// const gitLabAPIRoutes = require ('./routes/gitLabRepoAPIRoute.js');
 
 
 const port= process.env.PORT ||  5001;
@@ -27,13 +28,14 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
+app.use('/panel', panelRoutes);
 // app.use('/projects', projectRoutes);
 // app.use('/deliverables', deliverableRoutes);
 // app.use('/evaluations', evaluationRoutes);
 // app.use('/users', userRoutes);
 
 // Frontend deliver routes
-app.use ('/APIRoutes', gitLabAPIRoutes); 
+// app.use ('/APIRoutes', gitLabAPIRoutes); 
 
 
 // Connect to MongoDB
