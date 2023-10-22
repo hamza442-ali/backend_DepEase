@@ -11,17 +11,14 @@ const moduleSchema = new Schema({
     type: String,
     required: true,
   },
+  assignedTo: {
+    type: Array,
+    default:"[]"
+  },
   status: {
     type: String,
-    required: true,
-  },
-  type: {
-    type: String,
-    required: true,
-  },
-  assignedTo: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Replace 'User' with the actual user model name if needed
+    enum: ['Pending', 'In Progress', 'Completed'],
+    default: 'Pending',
   },
   details: {
     type: String,

@@ -13,7 +13,8 @@ const deliverableSchema = new Schema({
   },
   status: {
     type: String,
-    required: true,
+    enum: ['Pending', 'In Progress', 'Completed'],
+    default: 'Pending',
   },
   deadline: {
     type: Date,

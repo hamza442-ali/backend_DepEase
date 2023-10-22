@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const studentSchema = new Schema({
+const studentSchema = new mongoose.Schema({
   student_name: {
     type: String,
     required: true
@@ -15,6 +15,14 @@ const studentSchema = new Schema({
     type: String,
     required: true
   },
+  batch: {
+    type: Number,
+    required: true
+  },
+  semester: {
+    type: Number,
+    required: true
+  },
   registration_number: {
     type: String,
     required: true,
@@ -22,7 +30,7 @@ const studentSchema = new Schema({
   },
   isTeamLead: {
     type: Boolean,
-    default: false
+    default: false,
   },
   password: {
     type: String,
