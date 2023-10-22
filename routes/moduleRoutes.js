@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const moduleController = require('../controllers/moduleController');
+const moduleController = require('../controller/moduleController');
 
 // Create a new module
 router.post('/modules', moduleController.createModule);

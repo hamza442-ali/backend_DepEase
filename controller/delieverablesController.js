@@ -1,4 +1,4 @@
-const Deliverable = require('../models/deliverableModel');
+const Deliverable = require('../model/delieverableModel');
 
 // Controller for creating a new deliverable
 exports.createDeliverable = async (req, res) => {

@@ -1,4 +1,4 @@
-const Module = require('../models/moduleModel');
+const Module = require('../model/moduleModel');
 
 // Controller for creating a new module
 exports.createModule = async (req, res) => {

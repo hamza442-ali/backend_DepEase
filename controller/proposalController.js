@@ -1,4 +1,4 @@
-const Proposal = require('../models/proposalModel');
+const Proposal = require('../model/proposalModel');
 
 // Controller for creating a new proposal
 exports.createProposal = async (req, res) => {

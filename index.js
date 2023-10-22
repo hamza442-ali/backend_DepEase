@@ -5,12 +5,17 @@ const cors = require("cors");
 const dotenv = require("dotenv").config();
 
 
-
 // const router1  = require("./Routes/JobRoutes.js");
  const teamMemberRoutes  = require("./routes/teamMemberRoutes.js");
 const requirementRoutes = require("./routes/requirementsRoute.js");
 const emailRoutes  = require("./routes/emailRoutes.js");
 const evalRoutes = require("./routes/evaluationRoutes.js")
+const delieverablesRoutes = require("./routes/delieverablesRoutes.js")
+const groupRoutes  = require("./routes/groupRoutes.js");
+const moduleRoutes  = require("./routes/moduleRoutes.js");
+const projectRoutes  = require("./routes/projectRoutes.js");
+const proposalRoutes  = require("./routes/proposalRoutes.js");
+const taskRoutes = require("./routes/taskRoutes.js");
 
 
 const app = express();
@@ -40,6 +45,13 @@ app.use('/requirements', requirementRoutes);
  app.use("/email", emailRoutes);
  app.use("/teamMember", teamMemberRoutes);
 app.use("/evaluation", evalRoutes);
+app.use("/deliverables", delieverablesRoutes);
+app.use("/groups", groupRoutes);
+app.use("/modules", moduleRoutes);
+app.use("/projects", projectRoutes);
+app.use("/proposals", proposalRoutes);
+app.use("/tasks", taskRoutes);
+
 
 
 const jwt = require('jsonwebtoken');

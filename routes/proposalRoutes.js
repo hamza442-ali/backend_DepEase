@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const proposalController = require('../controllers/proposalController');
+const proposalController = require('../controller/proposalController');
 
 // Create a new proposal
 router.post('/proposals', proposalController.createProposal);

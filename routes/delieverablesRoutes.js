@@ -1,20 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const deliverableController = require('../controllers/deliverableController');
+const deliverableController = require('../controller/delieverablesController');
 
 // Create a new deliverable
-router.post('/deliverables', deliverableController.createDeliverable);
+router.post('/add', deliverableController.createDeliverable);
 
 // Get all deliverables
-router.get('/deliverables', deliverableController.getDeliverables);
+router.get('/getall', deliverableController.getDeliverables);
 
 // Get a specific deliverable by ID
-router.get('/deliverables/:id', deliverableController.getDeliverableById);
+router.get('/getone/:id', deliverableController.getDeliverableById);
 
 // Update a deliverable by ID
-router.put('/deliverables/:id', deliverableController.updateDeliverable);
+router.put('/update/:id', deliverableController.updateDeliverable);
 
 // Delete a deliverable by ID
-router.delete('/deliverables/:id', deliverableController.deleteDeliverable);
+router.delete('/delete/:id', deliverableController.deleteDeliverable);
 
 module.exports = router;
