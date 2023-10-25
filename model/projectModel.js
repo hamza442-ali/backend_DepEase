@@ -6,29 +6,25 @@ const projectSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  Batch: {
+  batch: {
     type: Number,
     required: true
   },
-  proposalSchema: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'ProposalSchema', // Reference to ProposalSchema model
+  semester: {
+    type: Number,
     required: true
   },
   teacher: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Teacher', // Reference to Teacher model
-    required: true
+    type: String,
+    required: true,
   },
   group: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Group', // Reference to Group model
-    required: true
+    type: String,
+    required: true,
   },
   projectProposal: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'ProjectProposal', // Reference to ProjectProposal model
-    required: true
+    type: String,
+    required: true,
   },
   
 });

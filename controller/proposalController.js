@@ -5,8 +5,10 @@ exports.createProposal = async (req, res) => {
   try {
     const proposal = new Proposal(req.body);
     await proposal.save();
+    
     res.status(201).json(proposal);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 };

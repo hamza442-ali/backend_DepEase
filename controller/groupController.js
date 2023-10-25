@@ -3,11 +3,11 @@ const Group = require('../model/groupModel');
 // Controller for creating a new group
 exports.createGroup = async (req, res) => {
   try {
-    const { groupId, teamLead, members } = req.body;
+    const { teamLeadId, teammate1Id, teammate2Id} = req.body;
     const group = new Group({
-      groupId,
-      teamLead,
-      members
+      teamLeadId,
+      teammate1Id,
+      teammate2Id
     });
     await group.save();
     res.status(201).json(group);

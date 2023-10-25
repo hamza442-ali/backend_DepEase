@@ -1,10 +1,7 @@
 const mongoose = require('mongoose');
 
 const taskSchema = new mongoose.Schema({
-  issueKey: {
-    type: String,
-    required: true,
-  },
+  
   summary: {
     type: String,
     required: true,
@@ -25,6 +22,10 @@ const taskSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  projectid: {
+    type: String,
+    required: true,
+  }
 });
 
 const Task = mongoose.model('Task', taskSchema);

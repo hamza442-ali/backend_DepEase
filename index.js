@@ -16,6 +16,8 @@ const moduleRoutes  = require("./routes/moduleRoutes.js");
 const projectRoutes  = require("./routes/projectRoutes.js");
 const proposalRoutes  = require("./routes/proposalRoutes.js");
 const taskRoutes = require("./routes/taskRoutes.js");
+const resourceRequestRoutes = require("./routes/resourceRequestRoutes.js");
+
 
 
 const app = express();
@@ -46,12 +48,12 @@ app.use('/requirements', requirementRoutes);
  app.use("/teamMember", teamMemberRoutes);
 app.use("/evaluation", evalRoutes);
 app.use("/deliverables", delieverablesRoutes);
-app.use("/groups", groupRoutes);
+app.use("/group", groupRoutes);
 app.use("/modules", moduleRoutes);
 app.use("/projects", projectRoutes);
 app.use("/proposals", proposalRoutes);
 app.use("/tasks", taskRoutes);
-
+app.use("/resource", resourceRequestRoutes);
 
 
 const jwt = require('jsonwebtoken');
@@ -93,6 +95,11 @@ function authenticateToken(req, res, next) {
     });
   }
   
+app.get('/test',(req,res)=>{
+  console.log("hello")
+});
+
+
 
   app.get('/op', authenticateToken, (req, res) => {
     // Access user information from request object

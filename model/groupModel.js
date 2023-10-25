@@ -2,18 +2,19 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const groupSchema = new Schema({
-  groupId: {
+ 
+  teamLeadId: {
     type: String,
-    required: true,
+    required: true
   },
-  teamLead: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Student',
+  teammate1Id: {
+    type: String,
+    required: true
   },
-  members: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Student',
-  }],
+  teammate2Id: {
+    type: String,
+    required: true
+  },
   
 });
 
