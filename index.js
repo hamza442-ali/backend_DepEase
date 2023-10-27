@@ -17,7 +17,7 @@ const projectRoutes  = require("./routes/projectRoutes.js");
 const proposalRoutes  = require("./routes/proposalRoutes.js");
 const taskRoutes = require("./routes/taskRoutes.js");
 const resourceRequestRoutes = require("./routes/resourceRequestRoutes.js");
-
+const studentRoutes = require("./routes/studentRoutes.js");
 
 
 const app = express();
@@ -54,7 +54,7 @@ app.use("/projects", projectRoutes);
 app.use("/proposals", proposalRoutes);
 app.use("/tasks", taskRoutes);
 app.use("/resource", resourceRequestRoutes);
-
+app.use("/student", studentRoutes);
 
 const jwt = require('jsonwebtoken');
 
