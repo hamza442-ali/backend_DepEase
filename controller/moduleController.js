@@ -3,18 +3,19 @@ const Module = require('../model/moduleModel');
 // Controller for creating a new module
 exports.createModule = async (req, res) => {
   try {
-    const { moduleId, name, assignedTo, status, details } = req.body;
+    const { projectId, name, status, details } = req.body;
+    console.log(req.body);
     const module = new Module({
-      moduleId,
+      projectId,
       name,
-      assignedTo,
       status,
       details,
     });
     await module.save();
     res.status(201).json(module);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+   res.status(500).json({ error: error.message });
+   
   }
 };
 
@@ -30,8 +31,9 @@ exports.getModules = async (req, res) => {
 
 // Controller for fetching a specific module by ID
 exports.getModuleById = async (req, res) => {
+  const { projectId } = req.params;
   try {
-    const module = await Module.findById(req.params.id);
+    const module = await Module.find({ projectId });
     if (!module) {
       return res.status(404).json({ error: 'Module not found' });
     }
@@ -40,6 +42,8 @@ exports.getModuleById = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
 
 // Controller for updating a module by ID
 exports.updateModule = async (req, res) => {
@@ -56,8 +60,9 @@ exports.updateModule = async (req, res) => {
 
 // Controller for deleting a module by ID
 exports.deleteModule = async (req, res) => {
+  const { id } = req.params;
   try {
-    const module = await Module.findByIdAndDelete(req.params.id);
+    const module = await Module.findByIdAndDelete(id);
     if (!module) {
       return res.status(404).json({ error: 'Module not found' });
     }

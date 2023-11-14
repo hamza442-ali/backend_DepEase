@@ -27,6 +27,7 @@ const projectSchema = new mongoose.Schema({
     required: true,
   },
   
+  
 });
 
 const Project = mongoose.model('Project', projectSchema);

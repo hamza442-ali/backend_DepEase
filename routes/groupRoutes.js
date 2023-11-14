@@ -8,8 +8,11 @@ router.post('/add', groupController.createGroup);
 // Get all groups
 router.get('/getall', groupController.getGroups);
 
-// Get a specific group by ID
-router.get('/getone/:id', groupController.getGroupById);
+// Get a specific group by matching registration nubmer with each teammate
+router.get('/getone/:id', groupController.getGroupByMatching);
+
+// Get a specific group by project ID
+router.get('/getmine/:id', groupController.getGroupById);
 
 // Update a group by ID
 router.put('/update/:id', groupController.updateGroup);

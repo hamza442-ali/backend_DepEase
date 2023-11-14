@@ -26,15 +26,15 @@ const getAllProjects = async (req, res) => {
 const getProjectBygroup = async (req, res) => {
   try {
     const { group } = req.params;
-    console.log(group)
+    
     const projects = await Project.find({group});
     if (!projects) {
       return res.status(404).json({ error: 'Project not found' });
     }
     res.status(200).json(projects);
   } catch (error) {
-    // res.status(500).json({ error: error.message });
-    console.log(error);
+    res.status(500).json({ error: error.message });
+    // console.log(error);
   }
 };
 

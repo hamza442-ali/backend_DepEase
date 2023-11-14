@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const deliverableSchema = new Schema({
-  deliverableId: {
+ 
+  projectId: {
     type: String,
-    required: true,
-    unique: true,
+    required: true
   },
   name: {
     type: String,

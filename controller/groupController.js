@@ -29,7 +29,7 @@ exports.getGroups = async (req, res) => {
 
 
 // Get a specific group by ID
-exports.getGroupById = async (req, res) => {
+exports.getGroupByMatching= async (req, res) => {
   const { id } = req.params;
   try {
     const group = await Group.findOne({
@@ -49,6 +49,24 @@ exports.getGroupById = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+
+// Get a specific group by ID
+exports.getGroupById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const group = await Group.findById(id); // Pass the id as a string directly, not within an object
+
+    if (!group) {
+      return res.status(404).json({ error: 'Group not found' });
+    }
+    res.status(200).json(group);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 // Update a group by ID
 exports.updateGroup = async (req, res) => {
