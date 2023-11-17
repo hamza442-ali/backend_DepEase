@@ -20,12 +20,12 @@ const deliverableSchema = new Schema({
     type: Date,
     required: true,
   },
-  modules: [
+  modules: 
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Module',
+      type: Array,
+      
     },
-  ],
+  
 });
 
 const Deliverable = mongoose.model('Deliverable', deliverableSchema);

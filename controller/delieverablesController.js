@@ -46,13 +46,26 @@ exports.getDeliverableById = async (req, res) => {
 
 // Controller for updating a deliverable by ID
 exports.updateDeliverable = async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const deliverable = await Deliverable.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    // Validate incoming data if needed
+
+    // Perform the update and get the updated deliverable
+    const deliverable = await Deliverable.findByIdAndUpdate(id, req.body, { new: true });
+
+    // Check if the deliverable is not found
     if (!deliverable) {
       return res.status(404).json({ error: 'Deliverable not found' });
     }
+
+    // Send the updated deliverable as the response
     res.status(200).json(deliverable);
   } catch (error) {
+    // Log the error for debugging purposes
+    console.error('Error updating deliverable:', error);
+
+    // Send an error response to the client
     res.status(500).json({ error: error.message });
   }
 };
@@ -78,8 +91,8 @@ exports.deleteDeliverable = async (req, res) => {
 exports.addModuleToDeliverable = async (req, res) => {
   try {
     const { moduleId, deliverableId } = req.body;
-console.log(moduleId+"mod");
-console.log(deliverableId)+"del";
+
+
     // Validate if the module and deliverable exist
     const module = await Module.findById(moduleId); 
     const deliverable = await Deliverable.findById(deliverableId);
@@ -89,7 +102,7 @@ console.log(deliverableId)+"del";
     }
 
     // Add the module to the deliverable
-    deliverable.modules.push(module._id); // Use module._id directly as it's already an ObjectId
+    deliverable.modules.push(moduleId); // Use module._id directly as it's already an ObjectId
 
     // Save the updated deliverable
     await deliverable.save();
@@ -118,7 +131,7 @@ exports.removeModuleFromDeliverable = async (req, res) => {
     }
 
     // Remove the module from the deliverable
-    deliverable.modules = deliverable.modules.filter((module) => module.toString() !== moduleId);
+deliverable.modules = deliverable.modules.filter((module) => module.toString() !== moduleId.toString());
 
     // Save the updated deliverable
     await deliverable.save();

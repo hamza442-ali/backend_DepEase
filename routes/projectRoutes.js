@@ -5,8 +5,8 @@ const projectController = require('../controller/projectController');
 // Create a new project
 router.post('/add', projectController.createProject);
 
-// Get all projects
-router.get('/getall', projectController.getAllProjects);
+// Get my proposal
+router.get('/getmine/:id', projectController.getMineProject);
 
 // Get a specific group by ID
 router.get('/getone/:group', projectController.getProjectBygroup);

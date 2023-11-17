@@ -17,4 +17,9 @@ router.put('/proposals/:id', proposalController.updateProposal);
 // Delete a proposal by ID
 router.delete('/delete/:id', proposalController.deleteProposal);
 
+
+// Get my proposal
+router.get('/getmine/:id', proposalController.getMineProposal);
+
+
 module.exports = router;

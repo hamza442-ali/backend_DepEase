@@ -13,11 +13,13 @@ const createProject = async (req, res) => {
 };
 
 // Controller to get all projects
-const getAllProjects = async (req, res) => {
+const getMineProject = async (req, res) => {
+  const { id } = req.params;
   try {
-    const projects = await Project.find();
+    const projects = await Project.findById(id);
     res.status(200).json(projects);
   } catch (error) {
+  console.log(error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -66,7 +68,7 @@ const deleteProjectById = async (req, res) => {
 
 module.exports = {
   createProject,
-  getAllProjects,
+  getMineProject,
   getProjectBygroup,
   updateProjectById,
   deleteProjectById,

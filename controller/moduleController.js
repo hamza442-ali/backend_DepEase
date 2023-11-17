@@ -47,8 +47,9 @@ exports.getModuleById = async (req, res) => {
 
 // Controller for updating a module by ID
 exports.updateModule = async (req, res) => {
+  const { id } = req.params;
   try {
-    const module = await Module.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const module = await Module.findByIdAndUpdate(id, req.body, { new: true });
     if (!module) {
       return res.status(404).json({ error: 'Module not found' });
     }
