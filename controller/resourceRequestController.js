@@ -46,18 +46,19 @@ exports.getResourceRequestById = async (req, res) => {
 };
 
 exports.updateResourceRequest = async (req, res) => {
+    const { id } = req.params;
     try {
-        const resourceRequest = await ResourceRequest.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-            runValidators: true
-        });
+        const resourceRequest = await ResourceRequest.findByIdAndUpdate(id, req.body, { new: true });
+    
         if (!resourceRequest) {
             return res.status(404).json({ error: 'Resource Request not found' });
         }
         res.status(200).json(resourceRequest);
     } catch (error) {
+        console.log(error);
         res.status(500).json({ error: error.message });
     }
+    
 };
 
 exports.deleteResourceRequest = async (req, res) => {

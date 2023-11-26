@@ -24,6 +24,25 @@ const getMineProject = async (req, res) => {
   }
 };
 
+
+
+// Controller to get a specific project by  teachcer ID
+const getAllMineProject = async (req, res) => {
+  
+  try {
+    const { teacher } = req.params;
+    const projects = await Project.find({teacher});
+    if (!projects) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+    res.status(200).json(projects);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+    // console.log(error);
+  }
+};
+
+
 // Controller to get a specific project by ID
 const getProjectBygroup = async (req, res) => {
   try {
@@ -72,4 +91,5 @@ module.exports = {
   getProjectBygroup,
   updateProjectById,
   deleteProjectById,
+  getAllMineProject,
 };

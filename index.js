@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
  const upload= require("express-fileupload");
 const cors = require("cors");
 const dotenv = require("dotenv").config();
-
+const Student = require('./model/studentModel.js');
 
 // const router1  = require("./Routes/JobRoutes.js");
  const teamMemberRoutes  = require("./routes/teamMemberRoutes.js");
@@ -18,7 +18,7 @@ const proposalRoutes  = require("./routes/proposalRoutes.js");
 const taskRoutes = require("./routes/taskRoutes.js");
 const resourceRequestRoutes = require("./routes/resourceRequestRoutes.js");
 const studentRoutes = require("./routes/studentRoutes.js");
-
+const teacherRoutes = require("./routes/teacherRoutes.js");
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -43,73 +43,72 @@ app.use(express.json());
 app.use(upload());
 
 
-app.use('/requirements', requirementRoutes);
- app.use("/email", emailRoutes);
- app.use("/teamMember", teamMemberRoutes);
-app.use("/evaluation", evalRoutes);
-app.use("/deliverables", delieverablesRoutes);
-app.use("/group", groupRoutes);
-app.use("/modules", moduleRoutes);
-app.use("/projects", projectRoutes);
-app.use("/proposals", proposalRoutes);
-app.use("/tasks", taskRoutes);
-app.use("/resource", resourceRequestRoutes);
-app.use("/student", studentRoutes);
-
 const jwt = require('jsonwebtoken');
 
-app.post('/login', (req, res) => {
-  // Retrieve user credentials from request body
-  const { email, password } = req.body;
-
-  // Verify user credentials
-  if (email == 'axiomshah@gmail.com' && password == 'Abc1234!') {
+app.post ('/login', async (req, res) => {
+  const { email_address, password } = req.body;
+  try {
+    const student = await Student.findOne({ email_address, password });
+    // Verify user credentials
+  if (student) {
     // Create a JWT with user information
-    const token = jwt.sign({ email }, secretKey);
+    const token = jwt.sign({ email_address }, secretKey);
 
-    // Send the JWT as a response
-    res.json({ token });
+    // Include the token in the JSON response
+res.status(200).json({
+  student: student,
+  token: token,
+});
   } else {
     // Return an error if credentials are invalid
     res.status(401).json({ error: 'Invalid credentials' });
+  }  
+  } catch (error) {
+    res.status(401).json({ error: error.message });
   }
+
+  
 });
 
 
 
-function authenticateToken(req, res, next) {
-    // Retrieve JWT from request header
-    const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.split(' ')[1];
-    
-    // Return an error if JWT is not provided
-    if (token == null) return res.status(401).json({ error: 'JWT required' });
-  
-    // Verify JWT and extract user information
-    jwt.verify(token, secretKey, (err, user) => {
-      if (err) return res.status(403).json({ error: 'Invalid JWT' });
-  
-      // Save user information in request object for future use
-     // req.user = user;
-      next();
-    });
+// Middleware to verify JWT token
+const authenticateToken = (req, res, next) => {
+  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ message: 'Token Required' });
   }
-  
-app.get('/test',(req,res)=>{
-  console.log("hello")
-});
 
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: 'Invalid token' });
+    }
 
-
-  app.get('/op', authenticateToken, (req, res) => {
-    // Access user information from request object
-    const { email } = req.user;
- 
-    // Return user-specific data
-    res.json( { "email": "abdullah" } );
+    // req.user = user;
+    next();
   });
+};
   
 
   app.get('/', (req, res) => {
  res.send("welcome")
   });
+
+
+
+
+
+app.use('/requirements', requirementRoutes);
+app.use('/email', authenticateToken, emailRoutes);
+app.use('/teamMember', authenticateToken, teamMemberRoutes);
+app.use('/evaluation', authenticateToken, evalRoutes);
+app.use('/deliverables', delieverablesRoutes);
+app.use('/group', groupRoutes);
+app.use('/modules', moduleRoutes);
+app.use('/projects', projectRoutes);
+app.use('/proposals', proposalRoutes);
+app.use('/tasks', authenticateToken, taskRoutes);
+app.use('/resource', authenticateToken, resourceRequestRoutes);
+app.use('/student', studentRoutes);
+app.use('/teacher', teacherRoutes);

@@ -10,7 +10,5 @@ router.get('/getme/:id', studentController.getStudent);
 router.get('/getone/:id', studentController.getStudentById);
 
 
-// login verification of a student
-    router.post('/login', studentController.studentLogin);
 
 module.exports = router;

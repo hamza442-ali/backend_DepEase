@@ -27,14 +27,14 @@ exports.getStudentById = async (req, res) => {
 
 
 
-// Student login
-exports.studentLogin = async (req, res) => {
-  const { email_address, password } = req.body;
-  try {
-    const student = await Student.findOne({ email_address, password });
-    if (!student) throw new Error('Invalid email or password');
-    res.status(200).json(student);
-  } catch (error) {
-    res.status(401).json({ error: error.message });
-  }
-};
+// // Student login
+// exports.studentLogin = async (req, res) => {
+//   const { email_address, password } = req.body;
+//   try {
+//     const student = await Student.findOne({ email_address, password });
+//     if (!student) throw new Error('Invalid email or password');
+//     res.status(200).json(student);
+//   } catch (error) {
+//     res.status(401).json({ error: error.message });
+//   }
+// };
