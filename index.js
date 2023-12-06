@@ -1,8 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
- const upload= require("express-fileupload");
 const cors = require("cors");
 const dotenv = require("dotenv").config();
+const bodyParser = require('body-parser');
+const cloudinary = require('cloudinary').v2;
 const Student = require('./model/studentModel.js');
 
 // const router1  = require("./Routes/JobRoutes.js");
@@ -19,6 +20,8 @@ const taskRoutes = require("./routes/taskRoutes.js");
 const resourceRequestRoutes = require("./routes/resourceRequestRoutes.js");
 const studentRoutes = require("./routes/studentRoutes.js");
 const teacherRoutes = require("./routes/teacherRoutes.js");
+const documentRoutes = require('./routes/documentRoutes');
+
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -40,7 +43,18 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 app.use(cors());
 app.use(express.json());
-app.use(upload());
+// Parse incoming requests data
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+
+cloudinary.config({
+  cloud_name: process.env.Cloudinary_NAME,
+  api_key: process.env.Cloudinary_KEY,
+  api_secret: process.env. Cloudinary_SECRET,
+});
+
+
 
 
 const jwt = require('jsonwebtoken');
@@ -112,3 +126,4 @@ app.use('/tasks', authenticateToken, taskRoutes);
 app.use('/resource', authenticateToken, resourceRequestRoutes);
 app.use('/student', studentRoutes);
 app.use('/teacher', teacherRoutes);
+app.use('/documents', documentRoutes);

@@ -2,7 +2,7 @@ const Requirement = require('../model/requirmentsModel.js');
 
 // Controller function for creating a new requirement
 const createRequirement = async (req, res) => {
-  // try {
+  try {
 let formData;
   if(req.body.comments){
     formData = {
@@ -34,9 +34,9 @@ let formData;
 
     const requirement = await Requirement.create(formData);
     res.status(201).json(requirement);
-  // } catch (error) {
-  //   res.status(500).json({ error: 'Failed to create requirement' });
-  // }
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create requirement' });
+  }
 };
 
 
