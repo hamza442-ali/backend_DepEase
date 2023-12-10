@@ -35,7 +35,12 @@ const studentSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
-  }
+  },
+
+  isSelected: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Student = mongoose.model('Student', studentSchema);
