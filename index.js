@@ -16,6 +16,8 @@ require('dotenv').config();
 const panelRoutes = require('./routes/createPanelRoute');
 const studentRoutes = require ('./routes/studentRoute');
 const announcementRoute = require ('./routes/makeAnnouncementRoute') ;
+const resourceRoutes = require ('./routes/resourceRequestRoute')
+const teacher = require('./routes/teacherRoute')
 
 // const gitLabAPIRoutes = require ('./routes/gitLabRepoAPIRoute.js');
 
@@ -33,6 +35,8 @@ app.use(express.urlencoded({extended: false}));
 app.use('/panel', panelRoutes);
 app.use('/student', studentRoutes);
 app.use('/announcement', announcementRoute)
+app.use('/resource', resourceRoutes)
+app.use('/teacher',teacher )
 
 // app.use('/projects', projectRoutes);
 // app.use('/deliverables', deliverableRoutes);

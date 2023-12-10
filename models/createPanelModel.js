@@ -1,9 +1,5 @@
-
-
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-
-
 
 const panelSchema = new Schema({
   id: String,
@@ -11,10 +7,13 @@ const panelSchema = new Schema({
     {
       id: Number,
       name: String,
+      panelHead: {
+        type: Boolean,
+        default: false,
+      },
     },
   ],
 });
 
-
-const Proposal = mongoose.model('Panel', panelSchema);
-module.exports = Proposal;
+const Panel = mongoose.model("Panel", panelSchema);
+module.exports = Panel;
