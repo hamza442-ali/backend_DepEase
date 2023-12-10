@@ -1,12 +1,14 @@
-const Proposal = require('../models/proposalModel');
+const Proposal = require('../model/proposalModel');
 
 // Controller for creating a new proposal
 exports.createProposal = async (req, res) => {
   try {
     const proposal = new Proposal(req.body);
     await proposal.save();
+    
     res.status(201).json(proposal);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -56,6 +58,20 @@ exports.deleteProposal = async (req, res) => {
     }
     res.status(200).json({ message: 'Proposal deleted successfully' });
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+// Controller to get amine proposal
+exports.getMineProposal = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const prop = await Proposal.findById(id);
+    res.status(200).json(prop);
+  } catch (error) {
+  console.log(error);
     res.status(500).json({ error: error.message });
   }
 };

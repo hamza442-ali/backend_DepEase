@@ -1,13 +1,16 @@
 const mongoose = require('mongoose');
 
 const proposalSchema = new mongoose.Schema({
-  projectTitle: {
+  title: {
+    type: String,
+    required: true
+  },
+  ProjectType: {
     type: String,
     required: true
   },
   supervisor: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Teacher', // Reference to Teacher model
+    type: String,
     required: true
   },
   problemStatement: {
