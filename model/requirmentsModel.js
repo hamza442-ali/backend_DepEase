@@ -59,7 +59,7 @@ const requirementSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  projectid: {// unique project id
+  projectid: {
     type: String,
     required: true,
   }
