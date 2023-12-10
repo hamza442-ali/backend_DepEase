@@ -2,18 +2,14 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const moduleSchema = new Schema({
-  moduleId: {
+  
+  projectId: {
     type: String,
-    required: true,
-    unique: true,
+    required: true
   },
   name: {
     type: String,
     required: true,
-  },
-  assignedTo: {
-    type: Array,
-    default:"[]"
   },
   status: {
     type: String,
