@@ -1,40 +1,40 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 
-const EvaluationSchema = new Schema({
-  projectId: {
-    type: String,
-    required: true,
-  },
-  studentId: {
-    type: String,
-    required: true,
-  },
-  criteria: {
-    type: String,
-    required: true,
-  },
-  totalScore: {
+const mongoose = require("mongoose");
+
+// Define the schema for the EvaluationForm
+const EvaluationSchema = new mongoose.Schema({
+
+  totalWeightage: {
     type: Number,
     required: true,
   },
-  obtainedScore: {
-    type: Number,
-    required: true,
-  },
-  comments: {
+  
+  fields: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      weightage: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
+  
+  
+  evaluationType: {
     type: String,
     required: true,
   },
-  evaluationDate: {
-    type: Date,
-    default: Date.now,
-  },
-  progress: {
+  obtainedMarks:{
     type: Number,
-    required: true,
-  },
+    default: 0
+  
+  }
+
 });
 
+// Create a model based on the schema
 const Evaluation = mongoose.model("Evaluation", EvaluationSchema);
 module.exports = Evaluation;

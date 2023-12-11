@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const teacherSchema = new mongoose.Schema({
+  
   name: {
     type: String,
     required: true,
@@ -17,7 +18,7 @@ const teacherSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true,
+    // unique: true,
    
   },
   mobile: {

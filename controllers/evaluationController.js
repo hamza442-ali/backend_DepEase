@@ -1,11 +1,14 @@
-const Evaluation = require("../model/evalutaionModel");
+const Evaluation = require("../models/evalutaionModel");
 
 // Controller function for creating a new evaluation
 const createEvaluation = async (req, res) => {
+
+  console.log("creating evaluation", req.body)
   try {
     const evaluation = await Evaluation.create(req.body);
-    res.status(201).json(evaluation);
+    res.status(200).json(evaluation);
   } catch (error) {
+    console.log("Evaluation Error", error)
     res.status(500).json({ error: "Failed to create evaluation" });
   }
 };
@@ -16,13 +19,15 @@ const getAllEvaluations = async (req, res) => {
 
     console.log(" getting all evaluations")
     const evaluations = await Evaluation.find();
+    console.log(evaluations)
     res.json(evaluations);
   } catch (error) {
+    console.log(error, "Error displaying")
     res.status(500).json({ error: "Failed to fetch evaluations" });
   }
 };
 
-// // delete
+//  delete
 const deleteEvaluation = async (req, res) => {
   try {
 

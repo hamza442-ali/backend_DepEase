@@ -2,17 +2,17 @@
 const express = require('express');
 const router = express.Router();
 
-const evaluationController = require('../controller/evaluationController');
+const evaluationController = require('../controllers/evaluationController');
  
 
 // Create a new evaluation
-router.post('/createEvaluation', evaluationController.createEvaluation);
+router.post('/create', evaluationController.createEvaluation);
 // Update a evaluation  
 router.put('/updateEvaluation/:id', evaluationController.updateEvaluation);
 // Delete a evaluation
 router.delete('/deleteEvaluation/:id', evaluationController.deleteEvaluation);
 // Get all evaluations
-router.get('/getAllEvaluations', evaluationController.getAllEvaluations);
+router.get('/getAll', evaluationController.getAllEvaluations);
 // Get a single evaluation
 // router.get('/getEvaluationById/:id', evaluationController.getEvaluationById);
 
