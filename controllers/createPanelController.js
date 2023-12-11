@@ -94,11 +94,56 @@ getAllPanels = (req, res) => {
               });
           };
 
+          // editPanelIdByid
+          const editPanelIdByid = (req, res) => {
+            const idToUpdate = req.params.id; 
+            const newPanelId = req.body.newPanelId; 
+          console.log(idToUpdate, newPanelId, " IDs")
+            if (!newPanelId) {
+              return res.status(400).send({ message: "New panel ID is required." });
+            }
+          
+            Panel.findOneAndUpdate(
+              { id: idToUpdate },
+              { $set: { id: newPanelId } },
+              { new: true }
+            )
+              .then((updatedPanel) => {
+                if (!updatedPanel) {
+                  return res.status(404).send({ message: "Panel not found." });
+                }
+          
+                res.send(updatedPanel);
+              })
+              .catch((err) => {
+                res.status(500).send({
+                  message:
+                    err.message ||
+                    "Some error occurred while updating the panel's ID.",
+                });
+              });
+          };
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     module.exports = {
 
          createPanel,
          getAllPanels,
         deletePanelByID,
-        AssignPanel
+        AssignPanel,
+        editPanelIdByid
 
     }

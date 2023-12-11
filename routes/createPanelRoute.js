@@ -15,6 +15,8 @@ router.get ('/getAllPanels', panelController.getAllPanels);
 router.delete ('/deletePanelbyID/:id', panelController.deletePanelByID);
 // Assign panel
 router.post('/assignPanel', panelController.AssignPanel);
+// editPanelIdByid
+router.put('/editPanelId/:id', panelController.editPanelIdByid);
 
 
 

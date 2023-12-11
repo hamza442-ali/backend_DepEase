@@ -19,6 +19,7 @@ const announcementRoute = require ('./routes/makeAnnouncementRoute') ;
 const resourceRoutes = require ('./routes/resourceRequestRoute')
 const teacher = require('./routes/teacherRoute')
 const evaluation = require('./routes/evaluationRoute')
+const project = require('./routes/projectRoute')
 
 // const gitLabAPIRoutes = require ('./routes/gitLabRepoAPIRoute.js');
 
@@ -39,6 +40,7 @@ app.use('/announcement', announcementRoute)
 app.use('/resource', resourceRoutes)
 app.use('/teacher',teacher )
 app.use('/evaluation', evaluation)
+app.use('/project',project )
 
 // app.use('/projects', projectRoutes);
 // app.use('/deliverables', deliverableRoutes);
