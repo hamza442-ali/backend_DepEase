@@ -1,30 +1,43 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
 const teacherSchema = new mongoose.Schema({
- teacher_name: {
-    type: String,
-    required: true
-  },
-  email_address: {
+  name: {
     type: String,
     required: true,
-    unique: true
   },
-  phone_number: {
-    type: String,
-    required: true
-  },
-  registration_number: {
+  employeeId: {
     type: String,
     required: true,
-    unique: true
   },
-  password: {
+  education: {
     type: String,
-    required: true
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+   
+  },
+  mobile: {
+    type: String,
+    required: true,
+  },
+  gender: {
+    type: String,
+    required: true,
+    enum: ['male', 'female'], 
+  },
+  profilePicture: {
+    type: String,
+    default: 'default-profile-picture.jpg', 
+  },
+  passoword:{
+    type: String,
+    required: true,
   }
 });
 
 const Teacher = mongoose.model('Teacher', teacherSchema);
-module.exports = Teacher;
+
+module.exports = Teacher;
