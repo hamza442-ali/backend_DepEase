@@ -9,10 +9,7 @@ require('dotenv').config();
 // const jwt = require('jsonwebtoken');
 
 
-// const projectRoutes = require('./routes/projectRoute');
-// const userRoutes = require('./routes/userRoute');
-// const evaluationRoutes = require ('./routes/evaluationRoute');
-// const deliverableRoutes = require ('./routes/deliverableRoute');
+
 const panelRoutes = require('./routes/createPanelRoute');
 const studentRoutes = require ('./routes/studentRoute');
 const announcementRoute = require ('./routes/makeAnnouncementRoute') ;
@@ -20,6 +17,8 @@ const resourceRoutes = require ('./routes/resourceRequestRoute')
 const teacher = require('./routes/teacherRoute')
 const evaluation = require('./routes/evaluationRoute')
 const project = require('./routes/projectRoute')
+const scheduling = require('./routes/schedulingRoute')
+const group = require ('./routes/groupRoute')
 
 // const gitLabAPIRoutes = require ('./routes/gitLabRepoAPIRoute.js');
 
@@ -41,6 +40,8 @@ app.use('/resource', resourceRoutes)
 app.use('/teacher',teacher )
 app.use('/evaluation', evaluation)
 app.use('/project',project )
+app.use('/scheduling', scheduling)
+app.use('/group', group)
 
 // app.use('/projects', projectRoutes);
 // app.use('/deliverables', deliverableRoutes);
