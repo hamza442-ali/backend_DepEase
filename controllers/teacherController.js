@@ -17,12 +17,13 @@ const createTeacher = async (req, res) => {
         // Assign each field individually
         teacher.name = req.body.name;
         teacher.employeeId = req.body.employeeId;
-        teacher.education = req.body.education;
+        teacher.Designation= req.body.Designation;
         teacher.email = req.body.email;
         teacher.mobile = req.body.mobile;
-        teacher.gender = req.body.gender;
         teacher.profilePicture = req.body.profilePicture;
-        teacher.password = req.body.password;
+        teacher.passoword = req.body.password;
+        
+
 
         // Save the teacher document
         await teacher.save();
@@ -44,6 +45,54 @@ const getAllTeachers = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+// update teacher isSelected 
+
+const updateTeacherIsSelected = async (req, res) => {
+    console.log(req.body)
+    const teachersToUpdate = req.body;
+
+    try {
+        // Use updateMany to update the isSelected field for multiple teachers
+        const result = await Teacher.updateMany(
+            { employeeId: { $in: teachersToUpdate.map((teacher) => teacher.employeeId) } },
+            { $set: { isSelected: true } }
+        );  
+
+        // if (result.nModified === teachersToUpdate.length) {
+        //     res.json({ message: 'Teachers updated successfully' });
+        // } else {
+        //     res.status(500).json({ error: 'Failed to update all teachers' });
+        // }
+    } catch (error) {
+        console.error('Error updating teachers:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+const updateIsSelectedFalse = async (req, res) => {
+    console.log(req.body)
+    const teachersToUpdate = req.body.teachers;
+
+    try {
+        // Use updateMany to update the isSelected field for multiple teachers
+        const result = await Teacher.updateMany(
+            { employeeId: { $in: teachersToUpdate.map((teacher) => teacher.employeeId) } },
+            { $set: { isSelected: false } }
+        );  
+
+       
+    } catch (error) {
+        console.error('Error updating teachers:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
+
+
+
+
 
 // Get teacher by ID
 const getTeacherById = async (req, res) => {
@@ -96,4 +145,6 @@ module.exports = {
     deleteTeacherById,
     editTeacherById,
     createTeacher,
+    updateTeacherIsSelected,
+    updateIsSelectedFalse
 };

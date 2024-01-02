@@ -6,21 +6,22 @@ const createStudent = async (req, res) => {
     console.log("Student creation route", req.body)
     try {
         
-        req.body.profilePicture = "hamza.jpg"
+        // req.body.profilePicture = "hamza.jpg"
         
         console.log("After Modification", req.body)
 
         const student = new students();
 
         // Assign each field individually
-        student.name = req.body.name;
+        student.student_name = req.body.student_name;
         student.registration_number = req.body.registration_number;
         student.email_address = req.body.email_address;
-        student.degree = req.body.degree;
-        student.section = req.body.section;
-        student.gender = req.body.gender;
-        student.profilePicture = req.body.profilePicture;
         student.password = req.body.password;
+        student.phone_number = req.body.phone_number;
+        student.batch= req.body.batch;
+        student.semester= req.body.semester;
+        student.department = req.body.department;
+
 
         // Save the student document
         await student.save();

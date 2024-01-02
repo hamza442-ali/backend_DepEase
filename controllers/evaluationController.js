@@ -32,7 +32,7 @@ const deleteEvaluation = async (req, res) => {
   try {
 
     // const evaluation = await Evaluation.findByIdAndDelete(req.params.id);
-    console.log(req.params.id)
+    console.log(req.params.id, " ")
     const evaluation = await Evaluation.deleteOne({ _id: req.params.id });
 
     if (evaluation) {

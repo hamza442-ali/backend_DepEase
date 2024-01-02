@@ -47,6 +47,7 @@ exports.getResourceRequestById = async (req, res) => {
 
 exports.updateResourceRequest = async (req, res) => {
     const { id } = req.params;
+    console.log(id)
     try {
         const resourceRequest = await ResourceRequest.findByIdAndUpdate(id, req.body, { new: true });
     

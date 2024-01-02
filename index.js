@@ -19,6 +19,7 @@ const evaluation = require('./routes/evaluationRoute')
 const project = require('./routes/projectRoute')
 const scheduling = require('./routes/schedulingRoute')
 const group = require ('./routes/groupRoute')
+const addMarks = require('./routes/addMarksRoute')
 
 // const gitLabAPIRoutes = require ('./routes/gitLabRepoAPIRoute.js');
 
@@ -42,6 +43,7 @@ app.use('/evaluation', evaluation)
 app.use('/project',project )
 app.use('/scheduling', scheduling)
 app.use('/group', group)
+app.use('/addMarks', addMarks)
 
 // app.use('/projects', projectRoutes);
 // app.use('/deliverables', deliverableRoutes);
