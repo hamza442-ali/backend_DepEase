@@ -10,6 +10,10 @@ const resourceRequestSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  TeacherId: {
+    type: String,
+    required: true
+  },
   phoneNumber: {
     type: String,
     required: true
@@ -49,8 +53,16 @@ adminStatus:{
 supervisorStatus:{
     type: String,
     default: "Pending"
-}
+},
 
+rejectionReason_T: {
+  type: String,
+  default: " "
+},
+rejectionReason_S: {
+  type: String,
+  default: " "
+},
 
 });
 

@@ -102,7 +102,7 @@ exports.addModuleToDeliverable = async (req, res) => {
     }
 
     // Add the module to the deliverable
-    deliverable.modules.push(moduleId); // Use module._id directly as it's already an ObjectId
+    deliverable.modules.push(module); // Use module._id directly as it's already an ObjectId
 
     // Save the updated deliverable
     await deliverable.save();
@@ -131,7 +131,7 @@ exports.removeModuleFromDeliverable = async (req, res) => {
     }
 
     // Remove the module from the deliverable
-deliverable.modules = deliverable.modules.filter((module) => module.toString() !== moduleId.toString());
+deliverable.modules = deliverable.modules.filter((module) => module._id.toString() !== moduleId.toString());
 
     // Save the updated deliverable
     await deliverable.save();

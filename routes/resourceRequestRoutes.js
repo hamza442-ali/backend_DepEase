@@ -11,6 +11,9 @@ router.get('/getall', resourceRequestController.getResourceRequests);
 // get by project id
 router.get('/getmine/:projectId', resourceRequestController.getResourceRequestsbyProjectid);
 
+// get by project id
+router.get('/getbyteacherId/:TeacherId', resourceRequestController.getResourceRequestsbyTeacherid);
+
 // Update a resource request by ID
 router.put('/update/:id', resourceRequestController.updateResourceRequest);
 
