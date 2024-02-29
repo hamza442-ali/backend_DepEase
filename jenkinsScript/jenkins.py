@@ -63,19 +63,59 @@ def check_jenkins():
         return jsonify({"error": error_message}), 500
 
 @app.route('/create_job', methods=['POST'])
-def create_job():
-    job_name = "try1"  # Hardcoded for testing purposes
-    if not job_name:
-        return jsonify({"error": "Job name is required"}), 400
+def create_pipeline_job():
+    data = request.json
+    job_name = "attem1"
+    #data.get('git_repo_url', '') 
+    git_repo_url = "https://github.com/abdullah117765/demoJenkins.git"
+    git_branch = "main"  # default to main branch
+
+    if not job_name or not git_repo_url:
+        return jsonify({"error": "Job name and Git repository URL are required"}), 400
 
     try:
         jenkins = Jenkins(JENKINS_URL, username=USERNAME, password=PASSWORD)
-        # Minimal XML configuration for the job
-        job_config = """<project><builders/><publishers/><buildWrappers/></project>"""
-        job = jenkins.create_job(job_name, xml=job_config)
-        return jsonify({"message": f"Job '{job_name}' created successfully"}), 200
+
+        # Jenkins job config XML with SCM configured for Git
+        config_xml = f"""<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.40">
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.92">
+    <scm class="hudson.plugins.git.GitSCM" plugin="git@4.7.0">
+      <configVersion>2</configVersion>
+      <userRemoteConfigs>
+        <hudson.plugins.git.UserRemoteConfig>
+          <url>{git_repo_url}</url>
+        </hudson.plugins.git.UserRemoteConfig>
+      </userRemoteConfigs>
+      <branches>
+        <hudson.plugins.git.BranchSpec>
+          <name>{git_branch}</name>
+        </hudson.plugins.git.BranchSpec>
+      </branches>
+      <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+      <submoduleCfg class="list"/>
+      <extensions/>
+    </scm>
+    <scriptPath>Jenkinsfile</scriptPath>
+    <lightweight>true</lightweight>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>"""
+
+        # Create pipeline job with the configured XML
+        jenkins.create_job(jobname=job_name, xml=config_xml)
+
+        return jsonify({"message": f"Pipeline job '{job_name}' created successfully"}), 200
     except Exception as e:
-        error_message = f"Failed to create job '{job_name}': {str(e)}"
+        error_message = f"Failed to create pipeline job '{job_name}': {str(e)}"
         print(error_message)
         return jsonify({"error": error_message}), 500
 
