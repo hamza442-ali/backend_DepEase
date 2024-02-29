@@ -55,7 +55,7 @@ const createJenkinsJob = async (req, res) => {
     };
 
     // Make Axios POST request to Flask route
-    const response = await axios.post(`${Flask_URL}/create_pipeline`, data);
+    const response = await axios.post(`${Flask_URL}/create_job`, data);
 
     // Respond with the response received from Flask
     res.status(response.status).json(response.data);
