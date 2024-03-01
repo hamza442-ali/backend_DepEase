@@ -31,27 +31,15 @@ async function loginToJenkins(req, res) {
 }
 
 
-async function checkJob(req, res) {
-  try {
-    
-    const response = await axios.get(`${Flask_URL}/check_jenkins`);
-    
-    if (response.data) {
-        res.status(200).json({ message: response.data.message });
-    } else {
-        res.status(401).json({ message: response.data.message });
-    }
-} catch (error) {
-    console.error("Error occurred:", error.message);
-    res.status(500).json({ message: response.data.message });
-}
-}
+
 
 // Define Express route handler
 const createJenkinsJob = async (req, res) => {
   try {
     const data = {
-      repo_url: "https://github.com/abdullah117765/demoJenkins.git" // Assuming the repo URL is sent in the request body
+      git_repo_url: req.body.repo_url,
+      git_branch: req.body.git_branch,
+      job_name: req.body.job_name,
     };
 
     // Make Axios POST request to Flask route
@@ -74,7 +62,52 @@ const createJenkinsJob = async (req, res) => {
   }
 };
 
+const deleteJenkinsJob = async (req, res) => {
+  try {
+    const { job_name } = req.body;
 
-module.exports = { loginToJenkins, createJenkinsJob, checkJob };
+    // Make a DELETE request to the Flask API
+    const response = await axios.delete(`${Flask_URL}/delete_pipeline`, {
+        data: { job_name },
+        headers: { 'Content-Type': 'application/json' }
+    });
+
+    // Return the response from Flask
+    res.status(response.status).json(response.data);
+} catch (error) {
+    // Handle errors
+    if (error.response) {
+        res.status(error.response.status).json(error.response.data);
+    } else {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+};
+
+
+
+const buildJenkinsJob = async (req, res) => {
+  const { job_name } = req.body;
+
+  if (!job_name) {
+      return res.status(400).json({ error: "Job name is required" });
+  }
+
+  try {
+      // Make a POST request to the Flask route
+      const response = await axios.post(`${Flask_URL}/build_pipeline`, {
+          job_name: job_name
+      });
+
+      // Return the response from Flask
+      return res.status(response.status).json(response.data);
+  } catch (error) {
+      // If an error occurs, return an error response
+      return res.status(500).json({ error: error.message });
+  }
+};
+
+
+module.exports = { loginToJenkins, createJenkinsJob,  deleteJenkinsJob,buildJenkinsJob};
 
 

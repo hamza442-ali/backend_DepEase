@@ -43,32 +43,14 @@ def login():
     else:
         return jsonify({"message": "Login failed"}), 401
 
-@app.route('/check_jenkins', methods=['GET'])
-def check_jenkins():
-    global jenkins_session
-    if not jenkins_session:
-        jenkins_login()
-    if jenkins_session:
-        try:
-            jobs_count = len(jenkins_session)
-            message = 'Jenkins server has %d jobs.' % jobs_count
-            return jsonify({"message": message}), 200
-        except Exception as e:
-            error_message = f"Failed to check Jenkins status: {str(e)}"
-            print(error_message)
-            return jsonify({"error": error_message}), 500
-    else:
-        error_message = "Jenkins session not initialized."
-        print(error_message)
-        return jsonify({"error": error_message}), 500
+
 
 @app.route('/create_job', methods=['POST'])
 def create_pipeline_job():
     data = request.json
-    job_name = "attem1"
-    #data.get('git_repo_url', '') 
-    git_repo_url = "https://github.com/abdullah117765/demoJenkins.git"
-    git_branch = "main"  # default to main branch
+    job_name = data.get('job_name')
+    git_repo_url = data.get('git_repo_url', '')
+    git_branch = data.get('git_branch', 'main')  # default to main branch
 
     if not job_name or not git_repo_url:
         return jsonify({"error": "Job name and Git repository URL are required"}), 400
@@ -120,6 +102,53 @@ def create_pipeline_job():
         return jsonify({"error": error_message}), 500
 
 
+@app.route('/build_pipeline', methods=['POST'])
+def build_job():
+    global jenkins_session
+    if not jenkins_session:
+        jenkins_login()
+
+    data = request.json
+    job_name = data.get('job_name')
+
+    if not job_name:
+        return jsonify({"error": "Job name is required"}), 400
+
+    try:
+        if job_name in jenkins_session.jobs:
+            jenkins_session.build_job(job_name)
+            return jsonify({"message": f"Build triggered for job '{job_name}'"}), 200
+        else:
+            return jsonify({"error": f"Job '{job_name}' not found"}), 404
+    except Exception as e:
+        error_message = f"Failed to trigger build for job '{job_name}': {str(e)}"
+        print(error_message)
+        return jsonify({"error": error_message}), 500
+
+
+
+@app.route('/delete_pipeline', methods=['DELETE'])
+def delete_job():
+    global jenkins_session
+    if not jenkins_session:
+        jenkins_login()
+
+    data = request.json
+    job_name = data.get('job_name')
+
+    if not job_name:
+        return jsonify({"error": "Job name is required"}), 400
+
+    try:
+        if job_name in jenkins_session.jobs:
+            jenkins_session.delete_job(job_name)
+            return jsonify({"message": f"Job '{job_name}' deleted successfully"}), 200
+        else:
+            return jsonify({"error": f"Job '{job_name}' not found"}), 404
+    except Exception as e:
+        error_message = f"Failed to delete job '{job_name}': {str(e)}"
+        print(error_message)
+        return jsonify({"error": error_message}), 500
 
 
 if __name__ == '__main__':
