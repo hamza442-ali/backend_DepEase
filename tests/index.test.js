@@ -1,7 +1,7 @@
 // Import necessary modules
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const app = require('../index');
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import app from '../index.js';
 
 // Configure chai
 chai.use(chaiHttp);
