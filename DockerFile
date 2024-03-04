@@ -1,0 +1,5 @@
+FROM node:latest
+WORKDIR /backend_DepEase
+ADD . .
+RUN npm install 
+CMD ["node" , "index.js"]
