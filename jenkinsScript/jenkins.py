@@ -1,7 +1,7 @@
 import requests
 from flask import Flask, request, jsonify
 from jenkinsapi.jenkins import Jenkins
-
+import time
 app = Flask(__name__)
 
 JENKINS_URL = "http://localhost:8080"
@@ -50,7 +50,7 @@ def create_pipeline_job():
     data = request.json
     job_name = data.get('job_name')
     git_repo_url = data.get('git_repo_url', '')
-    git_branch = data.get('git_branch', 'main')  # default to main branch
+    git_branch = "main"  # default to main branch
 
     if not job_name or not git_repo_url:
         return jsonify({"error": "Job name and Git repository URL are required"}), 400
@@ -95,7 +95,11 @@ def create_pipeline_job():
         # Create pipeline job with the configured XML
         jenkins.create_job(jobname=job_name, xml=config_xml)
 
-        return jsonify({"message": f"Pipeline job '{job_name}' created successfully"}), 200
+        # Generate a sample deployment link (for demonstration purposes)
+        deployment_link = f"http://example.com/deploy/{job_name}"
+        
+        # Return a JSON response with the deployment link
+        return jsonify({"message": f"Pipeline job '{job_name}' created successfully", "deploymentLink": deployment_link}), 200
     except Exception as e:
         error_message = f"Failed to create pipeline job '{job_name}': {str(e)}"
         print(error_message)
@@ -104,12 +108,12 @@ def create_pipeline_job():
 
 @app.route('/build_pipeline', methods=['POST'])
 def build_job():
-    global jenkins_session
-    if not jenkins_session:
-        jenkins_login()
+    
+    jenkins_login()
 
     data = request.json
     job_name = data.get('job_name')
+    print(job_name)
 
     if not job_name:
         return jsonify({"error": "Job name is required"}), 400
@@ -117,7 +121,17 @@ def build_job():
     try:
         if job_name in jenkins_session.jobs:
             jenkins_session.build_job(job_name)
-            return jsonify({"message": f"Build triggered for job '{job_name}'"}), 200
+            build_in_progress = True
+            while build_in_progress:
+                time.sleep(10)  # Poll every 10 seconds, you can adjust this as needed
+                last_build = jenkins_session.get_job(job_name).get_last_build()
+                if last_build.is_running():
+                    continue  # Build still in progress, continue polling
+                elif last_build.is_good():
+                    return jsonify({"message": f"Build triggered for job '{job_name}' and it succeeded"}), 200
+                else:
+                    return jsonify({"message": f"Build triggered for job '{job_name}' but it failed"}), 200
+            return jsonify({"message": f"Build triggered for job '{job_name}'"}), 200  # This line should be unreachable
         else:
             return jsonify({"error": f"Job '{job_name}' not found"}), 404
     except Exception as e:
