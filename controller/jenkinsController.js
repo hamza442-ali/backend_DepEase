@@ -127,11 +127,12 @@ const deleteJenkinsJob = async (req, res) => {
 const buildJenkinsJob = async (req, res) => {
   const { job_name } = req.body;
 
+  
   if (!job_name) {
     return res.status(400).json({ error: "Job name is required" });
   }
 
-  console.log("reached to build pipeline")
+  //console.log("reached to build pipeline")
   try {
     // Make a POST request to the Flask route
     const response = await axios.post(`${Flask_URL}/build_pipeline`, {
@@ -147,6 +148,7 @@ const buildJenkinsJob = async (req, res) => {
     res.status(200).json({
       message: response.data.message,
       deploymentLink: response.data.deploymentLink,
+      console_output: response.data.console_output,
     });
     // // Return the response from Flask
     // return res.status(response.status).json(response.data);

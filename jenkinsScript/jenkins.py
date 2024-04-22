@@ -7,7 +7,7 @@ app = Flask(__name__)
 JENKINS_URL = "http://localhost:8080"
 USERNAME = "abdullah"
 PASSWORD = "jenkinsE2r5oiq2"
-API_TOKEN = "11b6766e5fe3fa2e331e41064c9317e6b8"
+API_TOKEN = "11f4e4f2b7e45cf73f74b7d663ac9af2dd"
 jenkins_session = None
 
 def jenkins_login():
@@ -147,27 +147,22 @@ def build_job():
             while build_in_progress:
                 time.sleep(20)  # Poll every 20 seconds, you can adjust this as needed
                 print(f"Checking build status for job '{job_name}'")
-                last_build = job.get_last_build()
+                last_build = job.get_last_build() 
                 if last_build.is_running():
                     continue  # Build still in progress, continue polling
                 elif last_build.is_good():
-                    deployment_link = None
-                    build_info_url = f"{JENKINS_URL}/job/{job_name}/lastSuccessfulBuild/api/json"
-                    response = requests.get(build_info_url)
-                    print(response)
-                    build_info = response.json()
-                    # Access environment variables
-                    env_vars = build_info['environmentVariables']
-                    for var in env_vars:
-                        # Check for the global variable you're interested in
-                        if var['name'] == 'deployedLink':
-                            global_variable_value = var['value']
-                            print(f"Value of MY_GLOBAL_VARIABLE: {global_variable_value}")
-                            deployment_link = global_variable_value
-                            break  # Up to here is fetching the deployment_link
-                    return jsonify({"message": f"Build triggered for job '{job_name}' and it succeeded", "deploymentLink": deployment_link}), 200
+                    console_output = last_build.get_console()
+                    # Extract deployedLink from console output
+                    lines = console_output.split('\n')
+                    for line in lines:
+                        if line.startswith('deployedLink:'):
+                            deployment_link= line.split(': ')[1].strip()
+                    
+                    #print("deployment_link", deployment_link)
+                    # print("console_output", console_output)
+                    return jsonify({"message": f"Build triggered for job '{job_name}' and it succeeded", "deploymentLink": deployment_link , "console_output":console_output}), 200
                 else:
-                    return jsonify({"message": f"Build triggered for job '{job_name}' but it failed" , "deploymentLink": deployment_link}), 200
+                    return jsonify({"message": f"Build triggered for job '{job_name}' but it failed" , "deploymentLink": deployment_link, "console_output":console_output}), 200
             return jsonify({"message": f"Build triggered for job '{job_name}'"}), 200  # This line should be unreachable
         else:
             return jsonify({"error": f"Job '{job_name}' not found"}), 404
