@@ -5,12 +5,11 @@ const dotenv = require("dotenv").config();
 const bodyParser = require('body-parser');
 const cloudinary = require('cloudinary').v2;
 const Student = require('./model/studentModel.js');
-
+const Teacher=require('./model/teacherModel.js');
 // const router1  = require("./Routes/JobRoutes.js");
  const teamMemberRoutes  = require("./routes/teamMemberRoutes.js");
 const requirementRoutes = require("./routes/requirementsRoute.js");
 const emailRoutes  = require("./routes/emailRoutes.js");
-const evalRoutes = require("./routes/evaluationRoutes.js")
 const delieverablesRoutes = require("./routes/delieverablesRoutes.js")
 const groupRoutes  = require("./routes/groupRoutes.js");
 const moduleRoutes  = require("./routes/moduleRoutes.js");
@@ -21,6 +20,15 @@ const resourceRequestRoutes = require("./routes/resourceRequestRoutes.js");
 const studentRoutes = require("./routes/studentRoutes.js");
 const teacherRoutes = require("./routes/teacherRoutes.js");
 const documentRoutes = require('./routes/documentRoutes');
+const projectIdeaRoutes = require('./routes/projectIdeasRoutes.js');
+const fypPanelRoutes = require('./routes/fypPanelRoutes.js');
+const annoucementRoutesS = require('./routes/announcement_S_Routes.js');
+const annoucementRoutesA = require('./routes/announcement_A_Routes.js');
+const evalRoutes = require("./routes/evaluationRoutes.js")
+const addMarks = require("./routes/addMarksRoutes.js")
+const schedule = require('./routes/schedulingRoutes.js');
+const assignmentPanelRoutes = require('./routes/assignmentPanelRoutes.js');
+const jenkinsController = require('./routes/jenkinsRoutes.js');
 
 
 const app = express();
@@ -85,6 +93,33 @@ res.status(200).json({
 });
 
 
+app.post ('/loginT', async (req, res) => {
+  const { email, passoword } = req.body;
+ 
+  try {
+    const teacher = await Teacher.findOne({ email, passoword });
+    // Verify user credentials
+  if (teacher) {
+    // Create a JWT with user information
+    const token = jwt.sign({ email }, secretKey);
+
+    // Include the token in the JSON response
+res.status(200).json({
+  teacher: teacher,
+  token: token,
+});
+  } else {
+    // Return an error if credentials are invalid
+    res.status(401).json({ error: 'Invalid credentials' });
+  }  
+  } catch (error) {
+    res.status(401).json({ error: error.message });
+  }
+
+  
+});
+
+
 
 // Middleware to verify JWT token
 const authenticateToken = (req, res, next) => {
@@ -113,17 +148,25 @@ const authenticateToken = (req, res, next) => {
 
 
 
-app.use('/requirements', requirementRoutes);
+app.use('/requirements',authenticateToken, requirementRoutes);
 app.use('/email', authenticateToken, emailRoutes);
-app.use('/teamMember', authenticateToken, teamMemberRoutes);
-app.use('/evaluation', authenticateToken, evalRoutes);
-app.use('/deliverables', delieverablesRoutes);
-app.use('/group', groupRoutes);
-app.use('/modules', moduleRoutes);
-app.use('/projects', projectRoutes);
-app.use('/proposals', proposalRoutes);
-app.use('/tasks', authenticateToken, taskRoutes);
-app.use('/resource', authenticateToken, resourceRequestRoutes);
-app.use('/student', studentRoutes);
-app.use('/teacher', teacherRoutes);
-app.use('/documents', documentRoutes);
+app.use('/teamMember', authenticateToken,teamMemberRoutes);
+app.use('/deliverables', authenticateToken,delieverablesRoutes);
+app.use('/group', authenticateToken,groupRoutes);
+app.use('/modules',authenticateToken, moduleRoutes);
+app.use('/projects',authenticateToken, projectRoutes);
+app.use('/proposals',authenticateToken, proposalRoutes);
+app.use('/tasks', authenticateToken,taskRoutes);
+app.use('/resource',authenticateToken,  resourceRequestRoutes);
+app.use('/student',authenticateToken, studentRoutes);
+app.use('/teacher', authenticateToken,teacherRoutes);
+app.use('/documents',authenticateToken, documentRoutes);
+app.use('/projectIdea',authenticateToken, projectIdeaRoutes);
+app.use('/fypPanel',authenticateToken, fypPanelRoutes);
+app.use('/announcementS', authenticateToken,annoucementRoutesS);
+app.use('/announcementA',authenticateToken, annoucementRoutesA);
+app.use('/evaluation', authenticateToken,evalRoutes);
+app.use('/addMarks',authenticateToken, addMarks);
+app.use('/schedule',authenticateToken, schedule);
+app.use('/assignmentPanel', authenticateToken,assignmentPanelRoutes);
+app.use('/jenkins', jenkinsController);
