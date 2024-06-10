@@ -5,7 +5,7 @@ const panelSchema = new Schema({
   id: String,
   teachers: [
     {
-      id: Number,
+      employeeId: String,
       name: String,
       panelHead: {
         type: Boolean,

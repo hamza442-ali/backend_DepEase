@@ -10,6 +10,10 @@ const resourceRequestSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  TeacherId: {
+    type: String,
+    required: true
+  },
   phoneNumber: {
     type: String,
     required: true
