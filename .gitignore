@@ -1,2 +1,9 @@
 node_modules/
 .env
+
+
+# testing
+/coverage
+
+# production (exclude the build environment )
+/build

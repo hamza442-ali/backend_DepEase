@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-// Define the schema for the EvaluationForm
+// Define the schema for the EvaluationForm (completed)
 const AddMarksSchema = new mongoose.Schema({
   ProjectId: {
     type: String,

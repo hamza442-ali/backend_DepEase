@@ -4,7 +4,7 @@ const assignPanel = require("../models/panelAssignmentModel.js")
 
 const createPanel = (req, res) => {
     // console.log("create panel route")
-    // Validate request
+    // Validate request checking 
     if (!req.body.id) {
         res.status(400).send({ message: "Content can not be empty!" });
         return;
