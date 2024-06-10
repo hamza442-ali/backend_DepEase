@@ -3,6 +3,7 @@ const Requirement = require('../model/requirmentsModel.js');
 // Controller function for creating a new requirement
 const createRequirement = async (req, res) => {
   try {
+    console.log(req.body.title)
 let formData;
   if(req.body.comments){
     formData = {
@@ -35,6 +36,7 @@ let formData;
     const requirement = await Requirement.create(formData);
     res.status(201).json(requirement);
   } catch (error) {
+    console.log(error )
     res.status(500).json({ error: 'Failed to create requirement' });
   }
 };

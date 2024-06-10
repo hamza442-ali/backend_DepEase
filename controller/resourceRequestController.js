@@ -32,6 +32,16 @@ exports.getResourceRequestsbyProjectid = async (req, res) => {
     }
 };
 
+exports.getResourceRequestsbyTeacherid = async (req, res) => {
+    const { TeacherId } = req.params;
+    try {
+        const resourceRequests = await ResourceRequest.find({ TeacherId });
+      res.status(200).json(resourceRequests);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch resource request' });
+    }
+};
+
 
 exports.getResourceRequestById = async (req, res) => {
     try {

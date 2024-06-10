@@ -5,10 +5,11 @@ const Panel = require("../model/fypPanelModel.js");
 const getAllPanelsByTeacherId = async (req, res) => {
   try {
     const teacherId = req.params.teacherId;
+   
     
     // Using the Mongoose find method to get all panels where teacher.id matches the provided teacherId
-    const panels = await Panel.find({'teachers.id': teacherId});
-
+    const panels = await Panel.find({'teachers.employeeId': teacherId});
+   
     if (!panels || panels.length === 0) {
       return res.status(404).json({ message: 'No panels found for the given teacherId' });
     }

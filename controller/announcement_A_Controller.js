@@ -4,7 +4,7 @@ const Announcement = require('../model/announcement_A_Model');
 const getAllAnnouncements = async (req, res) => {
     try {
         const announcements = await Announcement.find();
-        console.log(announcements);
+        
         res.json(announcements);
     } catch (error) {
         console.error(error);

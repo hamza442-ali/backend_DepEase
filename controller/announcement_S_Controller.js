@@ -4,8 +4,7 @@ const SuperAnnouncement = require('../model/announcement_S_Model');
 exports.addAnnouncement = async (req, res) => {
   try {
     const { title, content, TeacherId, ProjectId } = req.body;
-
-   
+    
     // Create a new announcement
     const newAnnouncement = new SuperAnnouncement({
       title,
