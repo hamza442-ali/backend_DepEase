@@ -1,3 +1,4 @@
+const { protectPassword } = require('./plugins/password.plugin');
 const mongoose = require('mongoose');
 
 const teacherSchema = new mongoose.Schema({
@@ -36,7 +37,7 @@ const teacherSchema = new mongoose.Schema({
   },
 });
 
-require('../security/passwords').protectPassword(teacherSchema, 'passoword');
+protectPassword(teacherSchema, 'passoword');
 
 const Teacher = mongoose.model('Teacher', teacherSchema);
 

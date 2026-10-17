@@ -5,7 +5,7 @@ const announcementController = require('../controllers/supervisor-announcement.c
 // POST /api/announcements
 router.post(
   '/add',
-  require('../auth').requireRoles('teacher', 'admin'),
+  require('../middleware/authorize-roles').requireRoles('teacher', 'admin'),
   announcementController.addAnnouncement,
 );
 

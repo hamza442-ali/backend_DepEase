@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const schedulingController = require('../controllers/schedule-slot.controller');
-const staff = require('../auth').requireRoles('teacher', 'admin');
+const staff = require('../middleware/authorize-roles').requireRoles('teacher', 'admin');
 
 // GET /scheduling
 router.get('/getAll', schedulingController.getAll);

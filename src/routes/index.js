@@ -1,4 +1,4 @@
-const { requireRoles } = require('../auth');
+const { requireRoles } = require('../middleware/authorize-roles');
 const { ROLES, STAFF_ROLES } = require('../constants/roles');
 
 const featureRoutes = [

@@ -8,7 +8,7 @@ router.get('/getall', projectIdeasController.getAllProjectIdeas);
 // Add a new project idea
 router.post(
   '/add',
-  require('../auth').requireRoles('teacher', 'admin'),
+  require('../middleware/authorize-roles').requireRoles('teacher', 'admin'),
   projectIdeasController.addProjectIdea,
 );
 

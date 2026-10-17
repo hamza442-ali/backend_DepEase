@@ -1,9 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const { authentication, login } = require('./auth');
+const { authentication } = require('./middleware/authenticate');
+const { createAuthenticationRouter } = require('./routes/authentication.routes');
 const { registerRoutes } = require('./routes/index');
-const { rateLimit } = require('./middleware/rate-limit');
 const { HttpError } = require('./errors/http-error');
 const { errorHandler } = require('./middleware/error-handler');
 const { validateInput } = require('./middleware/validate-input');
@@ -24,9 +24,7 @@ function createApp(config) {
     const ready = mongoose.connection.readyState === 1;
     res.status(ready ? 200 : 503).json({ status: ready ? 'ready' : 'unavailable' });
   });
-  const loginLimit = rateLimit();
-  app.post('/login', loginLimit, login(config));
-  app.post('/loginT', loginLimit, login(config, true));
+  app.use(createAuthenticationRouter(config));
   registerRoutes(app, authentication(config));
   app.use((req, res, next) => next(new HttpError(404, 'Route not found')));
   app.use(errorHandler);

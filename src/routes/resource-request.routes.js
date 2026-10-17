@@ -17,7 +17,7 @@ router.get('/getbyteacherId/:TeacherId', resourceRequestController.getResourceRe
 // Update a resource request by ID
 router.put(
   '/update/:id',
-  require('../auth').requireRoles('teacher', 'admin'),
+  require('../middleware/authorize-roles').requireRoles('teacher', 'admin'),
   resourceRequestController.updateResourceRequest,
 );
 

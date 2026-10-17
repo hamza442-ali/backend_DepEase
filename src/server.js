@@ -1,16 +1,12 @@
 const mongoose = require('mongoose');
-const cloudinary = require('cloudinary').v2;
+const { configureStorage } = require('./integrations/cloudinary/storage');
 const { loadConfig } = require('./config/environment');
 const { createApp } = require('./app');
 
 async function startServer(env = process.env) {
   const config = loadConfig(env);
   mongoose.set('runValidators', true);
-  cloudinary.config({
-    cloud_name: env.CLOUDINARY_NAME || env.Cloudinary_NAME,
-    api_key: env.CLOUDINARY_KEY || env.Cloudinary_KEY,
-    api_secret: env.CLOUDINARY_SECRET || env.Cloudinary_SECRET,
-  });
+  configureStorage(env);
   const app = createApp(config);
   await mongoose.connect(config.mongoUri, { serverSelectionTimeoutMS: 10000 });
   let server;

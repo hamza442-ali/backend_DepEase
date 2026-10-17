@@ -32,4 +32,28 @@ function jobName(value) {
   return value;
 }
 
-module.exports = { arrayValue, dateRange, jobName };
+function repositoryUrl(value) {
+  let repository;
+  try {
+    repository = new URL(value);
+  } catch {
+    throw new HttpError(400, 'A valid HTTPS repository URL is required');
+  }
+
+  const allowedHosts = ['github.com', 'gitlab.com', 'bitbucket.org'];
+  if (
+    repository.protocol !== 'https:' ||
+    !allowedHosts.includes(repository.hostname) ||
+    repository.username ||
+    repository.password ||
+    repository.port ||
+    repository.search ||
+    repository.hash ||
+    repository.pathname.split('/').filter(Boolean).length < 2
+  ) {
+    throw new HttpError(400, 'Use an HTTPS GitHub, GitLab or Bitbucket repository URL');
+  }
+  return repository.href;
+}
+
+module.exports = { arrayValue, dateRange, jobName, repositoryUrl };

@@ -1,4 +1,4 @@
-const { requireRoles } = require('../auth');
+const { requireRoles } = require('../middleware/authorize-roles');
 const admin = requireRoles('admin');
 
 const express = require('express');
