@@ -1,24 +1,12 @@
-// fileRoutes.js
-
 const express = require('express');
-const router = express.Router();
-const fileController = require('../controller/documentController');
 const multer = require('multer');
-
-
-// Multer configuration for file uploads
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-
-
-// POST route to upload a file to Cloudinary
-router.post('/add', upload.single('file'), fileController.uploadFile);
-
-// DELETE route to delete a file from Cloudinary
-router.delete('/delete/:id', fileController.deleteFile);
-
-
-// GET route to retrieve files by ProjectId
-router.get('/getmine/:projectId', fileController.getFilesByProjectId);
-
+const { validateInput } = require('../src/http');
+const controller = require('../controller/documentController');
+const router = express.Router();
+router.post('/add', (req, res, next) => {
+  const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: req.app.locals.uploadLimit, files: 1, fields: 10, fieldSize: 16384 } });
+  upload.single('file')(req, res, next);
+}, validateInput, controller.uploadFile);
+router.delete('/delete/:id', controller.deleteFile);
+router.get('/getmine/:projectId', controller.getFilesByProjectId);
 module.exports = router;

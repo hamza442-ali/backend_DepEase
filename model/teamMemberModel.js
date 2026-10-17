@@ -30,8 +30,8 @@ const teamMemberSchema = new mongoose.Schema({
       required: true,
     },
     student_role: {
-      type: String, 
-      default:"Member"  
+      type: String,
+      default:"Member"
     },
 
     // image: {

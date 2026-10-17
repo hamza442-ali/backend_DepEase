@@ -1,6 +1,6 @@
 // routes/teacherRoutes.js
 const express = require('express');
-const router = express.Router();
+const router = express.Router({ caseSensitive: true });
 const teacherController = require('../controller/teacherController');
 
 

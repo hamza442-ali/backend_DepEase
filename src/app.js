@@ -1,0 +1,38 @@
+const express = require('express');
+const cors = require('cors');
+const mongoose = require('mongoose');
+const { authentication, login } = require('./auth');
+const { registerRoutes } = require('./routes');
+const { rateLimit } = require('./rate-limit');
+const { HttpError, errorHandler, validateInput } = require('./http');
+
+function createApp(config) {
+  const app = express();
+  app.disable('x-powered-by');
+  app.use((req, res, next) => {
+    res.set('X-Content-Type-Options', 'nosniff');
+    res.set('X-Frame-Options', 'DENY');
+    res.set('Cache-Control', 'no-store');
+    next();
+  });
+  app.use(cors({ origin: config.corsOrigins }));
+  app.use(express.json({ limit: config.bodyLimit }));
+  app.use(express.urlencoded({ extended: false, limit: config.bodyLimit }));
+  app.use(validateInput);
+  app.locals.uploadLimit = config.uploadLimit;
+  app.get('/', (req, res) => res.send('welcome'));
+  app.get('/health/live', (req, res) => res.json({ status: 'ok' }));
+  app.get('/health/ready', (req, res) => {
+    const ready = mongoose.connection.readyState === 1;
+    res.status(ready ? 200 : 503).json({ status: ready ? 'ready' : 'unavailable' });
+  });
+  const loginLimit = rateLimit();
+  app.post('/login', loginLimit, login(config));
+  app.post('/loginT', loginLimit, login(config, true));
+  registerRoutes(app, authentication(config));
+  app.use((req, res, next) => next(new HttpError(404, 'Route not found')));
+  app.use(errorHandler);
+  return app;
+}
+
+module.exports = { createApp };

@@ -3,6 +3,7 @@
 const mongoose = require('mongoose');
 
 const fileSchema = new mongoose.Schema({
+  resource_type: { type: String, enum: ['image', 'video', 'raw'], default: 'image' },
   public_id:{
     type: String,
     required: true,

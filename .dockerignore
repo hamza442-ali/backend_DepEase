@@ -1,0 +1,12 @@
+.git
+.env
+.env.*
+!.env.example
+node_modules
+.npm-cache
+.uv-cache
+coverage
+tests
+*.local.json
+**/__pycache__
+jenkinsScript

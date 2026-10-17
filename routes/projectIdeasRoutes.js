@@ -6,6 +6,6 @@ const projectIdeasController = require('../controller/projectIdeasController');
 router.get('/getall', projectIdeasController.getAllProjectIdeas);
 
 // Add a new project idea
-router.post('/add', projectIdeasController.addProjectIdea);
+router.post('/add', require('../src/auth').requireRoles('teacher', 'admin'), projectIdeasController.addProjectIdea);
 
 module.exports = router;

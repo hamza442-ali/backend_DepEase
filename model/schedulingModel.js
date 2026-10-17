@@ -12,7 +12,7 @@ const slotSchema = new mongoose.Schema({
     required: true,
   },
   day: {
-    type: String, 
+    type: String,
     required: true,
   },
   date: {
@@ -31,4 +31,4 @@ const slotSchema = new mongoose.Schema({
 
 const Slot = mongoose.model('Slot', slotSchema);
 
-module.exports = Slot;
+module.exports = Slot;

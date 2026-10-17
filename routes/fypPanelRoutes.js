@@ -10,4 +10,4 @@ router.get('/getall/:teacherId', panelController.getAllPanelsByTeacherId);
 
 
 
-module.exports = router;
+module.exports = router;

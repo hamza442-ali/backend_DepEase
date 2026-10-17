@@ -15,7 +15,7 @@ router.get('/getmine/:projectId', resourceRequestController.getResourceRequestsb
 router.get('/getbyteacherId/:TeacherId', resourceRequestController.getResourceRequestsbyTeacherid);
 
 // Update a resource request by ID
-router.put('/update/:id', resourceRequestController.updateResourceRequest);
+router.put('/update/:id', require('../src/auth').requireRoles('teacher', 'admin'), resourceRequestController.updateResourceRequest);
 
 
 // Delete a resource request by ID

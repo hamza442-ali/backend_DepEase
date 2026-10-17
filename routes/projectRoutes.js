@@ -4,6 +4,7 @@ const projectController = require('../controller/projectController');
 
 // Create a new project
 router.post('/add', projectController.createProject);
+router.get('/getall', projectController.getAllProject);
 
 // Get my projects
 router.get('/getmine/:id', projectController.getMineProject);

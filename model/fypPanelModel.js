@@ -16,4 +16,4 @@ const panelSchema = new Schema({
 });
 
 const Panel = mongoose.model("Panel", panelSchema);
-module.exports = Panel;
+module.exports = Panel;

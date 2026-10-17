@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const groupSchema = new Schema({
- 
+
   teamLeadId: {
     type: String,
     required: true
@@ -15,7 +15,7 @@ const groupSchema = new Schema({
     type: String,
     required: true
   },
-  
+
 });
 
 const Group = mongoose.model('Group', groupSchema);

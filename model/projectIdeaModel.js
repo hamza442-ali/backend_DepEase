@@ -21,6 +21,6 @@ const projectIdeaSchema = new mongoose.Schema({
   },
 });
 
-const ProjectIdea = mongoose.model('ProjectIdea', projectIdeaSchema);
+const ProjectIdea = mongoose.model('LegacyProjectIdea', projectIdeaSchema, 'legacyProjectIdeas');
 
 module.exports = ProjectIdea;

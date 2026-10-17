@@ -1,40 +1,26 @@
 const Student = require('../model/studentModel');
-
-
-
-exports.getStudent = async (req, res) => {
-  try {
-    
-    registration_number=req.params.id;
-    const students = await Student.find({ registration_number});
-    res.status(200).json(students);
-  } catch (error) {
-     res.status(500).json({ error: error.message });
-    
+const { asyncHandler, HttpError } = require('../src/http');
+exports.getStudent = asyncHandler(async (req, res) => {
+  const students = await Student.find({ registration_number: req.params.id });
+  if (req.user.role === 'student' && students.some(student => String(student._id) !== req.user.sub)) {
+    throw new HttpError(403, 'Insufficient permissions');
   }
-};
-
-// Get a single student by ID
-exports.getStudentById = async (req, res) => {
-  try {
-    const student = await Student.findById(req.params.id);
-    if (!student) throw new Error('Student not found');
-    res.status(200).json(student);
-  } catch (error) {
-    res.status(404).json({ error: error.message });
-  }
-};
-
-
-
-// // Student login
-// exports.studentLogin = async (req, res) => {
-//   const { email_address, password } = req.body;
-//   try {
-//     const student = await Student.findOne({ email_address, password });
-//     if (!student) throw new Error('Invalid email or password');
-//     res.status(200).json(student);
-//   } catch (error) {
-//     res.status(401).json({ error: error.message });
-//   }
-// };
+  res.json(students);
+});
+exports.getStudentById = asyncHandler(async (req, res) => {
+  const student = await Student.findById(req.params.id);
+  if (!student) throw new HttpError(404, 'Student not found');
+  if (req.user.role === 'student' && String(student._id) !== req.user.sub) throw new HttpError(403, 'Insufficient permissions');
+  res.json(student);
+});
+exports.getAllStudents = asyncHandler(async (req, res) => res.json(await Student.find()));
+exports.createStudent = asyncHandler(async (req, res) => {
+  const { student_name, registration_number, email_address, password, phone_number, batch, semester, department } = req.body;
+  const student = await Student.create({ student_name, registration_number, email_address, password, phone_number, batch, semester, department });
+  res.status(201).json(student);
+});
+exports.deleteStudentById = asyncHandler(async (req, res) => {
+  const result = await Student.deleteOne({ registration_number: req.params.id });
+  if (!result.deletedCount) throw new HttpError(404, 'Student not found');
+  res.json({ message: 'Student deleted successfully' });
+});

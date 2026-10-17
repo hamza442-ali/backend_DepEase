@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const resourceRequestSchema = new mongoose.Schema({
-  
+
   studentId: {
     type: String,
     required: true
@@ -10,10 +10,7 @@ const resourceRequestSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  TeacherId: {
-    type: String,
-    required: true
-  },
+  TeacherId: { type: String },
   phoneNumber: {
     type: String,
     required: true

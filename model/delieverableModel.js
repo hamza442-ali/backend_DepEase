@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const deliverableSchema = new Schema({
- 
+
   projectId: {
     type: String,
     required: true
@@ -20,12 +20,12 @@ const deliverableSchema = new Schema({
     type: Date,
     required: true,
   },
-  modules: 
+  modules:
     {
       type: Array,
-      
+
     },
-  
+
 });
 
 const Deliverable = mongoose.model('Deliverable', deliverableSchema);

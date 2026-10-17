@@ -1,29 +1,17 @@
-# Stage 1: Build
-FROM node:14 AS build
-
-# Set the working directory
+FROM node:22-alpine
+ENV NODE_ENV=production
 WORKDIR /app
-
-# Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application
-COPY . .
-
-# Stage 2: Production-ready image
-FROM node:14-alpine
-
-# Set the working directory
-WORKDIR /app
-
-# Copy only the necessary files from the build stage
-COPY --from=build /app .
-
-# Expose port 3000
+RUN npm ci --omit=dev && npm cache clean --force
+COPY --chown=node:node index.js ./
+COPY --chown=node:node src ./src
+COPY --chown=node:node controller ./controller
+COPY --chown=node:node controllers ./controllers
+COPY --chown=node:node model ./model
+COPY --chown=node:node models ./models
+COPY --chown=node:node routes ./routes
+COPY --chown=node:node scripts ./scripts
+USER node
 EXPOSE 3001
-
-# Command to run the application
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3001)+'/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 CMD ["node", "index.js"]

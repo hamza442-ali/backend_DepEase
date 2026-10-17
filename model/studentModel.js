@@ -47,6 +47,8 @@ const studentSchema = new mongoose.Schema({
   },
 });
 
+require('../src/passwords').protectPassword(studentSchema, 'password');
+
 const Student = mongoose.model('Student', studentSchema);
 
 module.exports = Student;

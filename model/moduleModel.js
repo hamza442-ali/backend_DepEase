@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const moduleSchema = new Schema({
-  
+
   projectId: {
     type: String,
     required: true

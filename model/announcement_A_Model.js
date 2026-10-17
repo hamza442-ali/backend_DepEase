@@ -2,8 +2,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const announcementsSchema = new Schema({
-   
-    
+
+
     userId:{
 
         type: String,
@@ -13,7 +13,7 @@ const announcementsSchema = new Schema({
         type: String,
         required: true
     },
-    
+
     richText: {
         type: String,
         required: true

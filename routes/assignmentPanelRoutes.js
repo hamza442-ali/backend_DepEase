@@ -8,4 +8,4 @@ const assignmentController = require('../controller/assignmentPanelController');
 router.get('/getall', assignmentController.getAssignments);
 
 
-module.exports = router;
+module.exports = router;

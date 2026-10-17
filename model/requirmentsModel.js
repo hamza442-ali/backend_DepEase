@@ -16,7 +16,7 @@ const commentSchema = new mongoose.Schema({
 
 const requirementSchema = new mongoose.Schema({
 
-  
+
   title: {
     type: String,
     required: true,
@@ -28,7 +28,7 @@ const requirementSchema = new mongoose.Schema({
   },
   assignedTo: {
     type: Array,
-    default:"[]"
+    default: []
   },
   status: {
     type: String,
@@ -49,11 +49,11 @@ const requirementSchema = new mongoose.Schema({
   },
   attachments: {
     type: Array,
-    default:"[]"
-  },  
+    default: []
+  },
   comments:{
         type: [commentSchema],
-       
+
   } ,
   writtenby: {//roll number
     type: String,

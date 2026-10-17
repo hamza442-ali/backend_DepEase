@@ -5,7 +5,7 @@ const schedulerSchema = new mongoose.Schema({
         type: String,
         required: true,
       },
-  
+
     start: {
     type: Date,
     required: true,
@@ -23,7 +23,7 @@ const schedulerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
- 
+
 });
 
 const Scheduler = mongoose.model('Scheduler', schedulerSchema);

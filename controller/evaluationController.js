@@ -1,19 +1,8 @@
-const Evaluation = require("../model/evalutaionModel");
+const Model = require('../model/evalutaionModel');
+const { crud } = require('../src/crud');
+const handlers = crud(Model, 'Evaluation');
 
-const getAllEvaluations = async (req, res) => {
-  try {
-
-   
-    const evaluations = await Evaluation.find();
-    console.log(evaluations)
-    res.json(evaluations);
-  } catch (error) {
-    console.log(error, "Error displaying")
-    res.status(500).json({ error: "Failed to fetch evaluations" });
-  }
-};
-
-
-module.exports = { 
-  getAllEvaluations,
-};
+exports.createEvaluation = handlers.create();
+exports.getAllEvaluations = handlers.list();
+exports.updateEvaluation = handlers.update();
+exports.deleteEvaluation = handlers.remove();

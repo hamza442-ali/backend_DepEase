@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const pipelineSchema = new Schema({
- 
+
     git_repo_url: {
     type: String,
     required: true
@@ -18,15 +18,15 @@ const pipelineSchema = new Schema({
   deploymentLink: {
     type: String,
   },
-  job_name: { 
+  job_name: {
     type: String,
     required: true
   },
-  Type: { 
+  Type: {
     type: String,
     required: true
   },
-  
+
 });
 
 const Pipeline = mongoose.model('Pipeline', pipelineSchema);

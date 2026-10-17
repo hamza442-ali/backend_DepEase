@@ -24,7 +24,7 @@ const teacherSchema = new mongoose.Schema({
   },
   profilePicture: {
     type: String,
-    default: 'default-profile-picture.jpg', 
+    default: 'default-profile-picture.jpg',
   },
   passoword:{
     type: String,
@@ -36,6 +36,8 @@ const teacherSchema = new mongoose.Schema({
   },
 });
 
+require('../src/passwords').protectPassword(teacherSchema, 'passoword');
+
 const Teacher = mongoose.model('Teacher', teacherSchema);
 
-module.exports = Teacher;
+module.exports = Teacher;
