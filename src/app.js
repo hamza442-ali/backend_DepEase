@@ -2,19 +2,17 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const { authentication, login } = require('./auth');
-const { registerRoutes } = require('./routes');
-const { rateLimit } = require('./rate-limit');
-const { HttpError, errorHandler, validateInput } = require('./http');
+const { registerRoutes } = require('./routes/index');
+const { rateLimit } = require('./middleware/rate-limit');
+const { HttpError } = require('./errors/http-error');
+const { errorHandler } = require('./middleware/error-handler');
+const { validateInput } = require('./middleware/validate-input');
+const { securityHeaders } = require('./middleware/security-headers');
 
 function createApp(config) {
   const app = express();
   app.disable('x-powered-by');
-  app.use((req, res, next) => {
-    res.set('X-Content-Type-Options', 'nosniff');
-    res.set('X-Frame-Options', 'DENY');
-    res.set('Cache-Control', 'no-store');
-    next();
-  });
+  app.use(securityHeaders);
   app.use(cors({ origin: config.corsOrigins }));
   app.use(express.json({ limit: config.bodyLimit }));
   app.use(express.urlencoded({ extended: false, limit: config.bodyLimit }));

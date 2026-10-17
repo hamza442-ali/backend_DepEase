@@ -1,13 +1,2 @@
-const mongoose = require('mongoose');
-
-
-
-const assignmentSchema = new mongoose.Schema({
-  studentIds: [String], // this basically has projectId of all the students in the panel
-  panelId: String,
-});
-
-
-const Assignment = mongoose.model('AssignmentPanel', assignmentSchema);
-
-module.exports = Assignment;
+// Compatibility entry point for contributor branch imports.
+module.exports = require('../src/models/panel-assignment.model');

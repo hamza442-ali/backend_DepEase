@@ -1,1 +1,2 @@
-module.exports = require('./studentModel');
+// Compatibility entry point for contributor branch imports.
+module.exports = require('../src/models/student.model');

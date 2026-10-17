@@ -1,1 +1,2 @@
-module.exports = require('../controller/teacherController');
+// Compatibility entry point for contributor branch imports.
+module.exports = require('../src/controllers/teacher.controller');

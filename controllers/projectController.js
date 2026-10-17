@@ -1,1 +1,2 @@
-module.exports = require('../controller/projectController');
+// Compatibility entry point for contributor branch imports.
+module.exports = require('../src/controllers/project.controller');

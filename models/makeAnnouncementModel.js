@@ -1,2 +1,2 @@
-// Compatibility export for the original Hamza branch.
-module.exports = require('../model/announcement_A_Model');
+// Compatibility entry point for contributor branch imports.
+module.exports = require('../src/models/admin-announcement.model');

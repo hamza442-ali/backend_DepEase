@@ -1,4 +1,2 @@
-const Model = require('../model/announcement_A_Model');
-const { crud } = require('../src/crud');
-const handlers = crud(Model, 'Announcement');
-exports.getAllAnnouncements = handlers.list();
+// Compatibility entry point for contributor branch imports.
+module.exports = require('../src/controllers/admin-announcement.controller');

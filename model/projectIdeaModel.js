@@ -1,26 +1,2 @@
-const mongoose = require('mongoose');
-
-const projectIdeaSchema = new mongoose.Schema({
-  ProjectIdeaId: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  IdeaTitle: {
-    type: String,
-    required: true,
-  },
-  Description: {
-    type: String,
-    required: true,
-  },
-  teacher: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Teacher', // Reference to Teacher model
-    required: true,
-  },
-});
-
-const ProjectIdea = mongoose.model('LegacyProjectIdea', projectIdeaSchema, 'legacyProjectIdeas');
-
-module.exports = ProjectIdea;
+// Compatibility entry point for contributor branch imports.
+module.exports = require('../src/models/legacy-project-idea.model');

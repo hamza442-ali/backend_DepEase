@@ -1,2 +1,2 @@
-// Compatibility export for the original Hamza branch.
-module.exports = require('../model/groupModel');
+// Compatibility entry point for contributor branch imports.
+module.exports = require('../src/models/group.model');

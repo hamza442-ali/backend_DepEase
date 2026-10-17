@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const cloudinary = require('cloudinary').v2;
-const { loadConfig } = require('./config');
+const { loadConfig } = require('./config/environment');
 const { createApp } = require('./app');
 
 async function startServer(env = process.env) {

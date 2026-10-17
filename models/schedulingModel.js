@@ -1,2 +1,2 @@
-// Compatibility export for the original Hamza branch.
-module.exports = require('../model/schedulingModel');
+// Compatibility entry point for contributor branch imports.
+module.exports = require('../src/models/schedule-slot.model');

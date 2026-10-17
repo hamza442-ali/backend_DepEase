@@ -1,11 +1,2 @@
-const express = require('express');
-const router = express.Router();
-const projectIdeasController = require('../controller/projectIdeasController');
-
-// Fetch all project ideas
-router.get('/getall', projectIdeasController.getAllProjectIdeas);
-
-// Add a new project idea
-router.post('/add', require('../src/auth').requireRoles('teacher', 'admin'), projectIdeasController.addProjectIdea);
-
-module.exports = router;
+// Compatibility entry point for contributor branch imports.
+module.exports = require('../src/routes/project-idea.routes');

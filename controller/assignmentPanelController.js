@@ -1,4 +1,2 @@
-const Model = require('../model/panelAssignmentModel');
-const { crud } = require('../src/crud');
-const handlers = crud(Model, 'Panel assignment');
-exports.getAssignments = handlers.list();
+// Compatibility entry point for contributor branch imports.
+module.exports = require('../src/controllers/panel-assignment.controller');

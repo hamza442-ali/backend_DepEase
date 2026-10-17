@@ -1,11 +1,2 @@
-const express = require('express');
-const router = express.Router();
-
-
-const assignmentController = require('../controller/assignmentPanelController');
-
-//get by peanel id
-router.get('/getall', assignmentController.getAssignments);
-
-
-module.exports = router;
+// Compatibility entry point for contributor branch imports.
+module.exports = require('../src/routes/panel-assignment.routes');

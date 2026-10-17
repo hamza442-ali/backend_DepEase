@@ -1,9 +1,9 @@
 require('dotenv').config();
 const fs = require('node:fs');
 const mongoose = require('mongoose');
-const Student = require('../model/studentModel');
-const Teacher = require('../model/teacherModel');
-const { loadConfig } = require('../src/config');
+const Student = require('../src/models/student.model');
+const Teacher = require('../src/models/teacher.model');
+const { loadConfig } = require('../src/config/environment');
 
 async function main() {
   const type = process.argv[2];
@@ -14,7 +14,9 @@ async function main() {
   await mongoose.connect(config.mongoUri, { serverSelectionTimeoutMS: 10000 });
   try {
     const Model = type === 'teacher' ? Teacher : Student;
-    const account = await Model.findOne({ [type === 'teacher' ? 'email' : 'email_address']: email });
+    const account = await Model.findOne({
+      [type === 'teacher' ? 'email' : 'email_address']: email,
+    });
     if (!account) throw new Error('Account not found');
     account[type === 'teacher' ? 'passoword' : 'password'] = password;
     await account.save();

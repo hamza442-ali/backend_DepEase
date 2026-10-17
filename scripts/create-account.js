@@ -1,9 +1,9 @@
 require('dotenv').config();
 const fs = require('node:fs');
 const mongoose = require('mongoose');
-const Student = require('../model/studentModel');
-const Teacher = require('../model/teacherModel');
-const { loadConfig } = require('../src/config');
+const Student = require('../src/models/student.model');
+const Teacher = require('../src/models/teacher.model');
+const { loadConfig } = require('../src/config/environment');
 
 async function main() {
   const type = process.argv[2];
@@ -24,6 +24,8 @@ async function main() {
 }
 
 main().catch(() => {
-  console.error('Account creation failed. Check input, configuration, and duplicate email or registration number.');
+  console.error(
+    'Account creation failed. Check input, configuration, and duplicate email or registration number.',
+  );
   process.exitCode = 1;
 });

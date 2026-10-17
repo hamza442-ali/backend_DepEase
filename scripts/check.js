@@ -2,7 +2,16 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 
-const directories = ['src', 'controller', 'controllers', 'model', 'models', 'routes', 'scripts', 'tests'];
+const directories = [
+  'src',
+  'controller',
+  'controllers',
+  'model',
+  'models',
+  'routes',
+  'scripts',
+  'tests',
+];
 const files = ['index.js'];
 function collect(directory) {
   if (!fs.existsSync(directory)) return;
@@ -21,10 +30,15 @@ for (const file of files) {
     for (const match of source.matchAll(/require\(['"](\.[^'"]+)['"]\)/g)) {
       const target = path.resolve(path.dirname(file), match[1]);
       const candidates = [target, target + '.js', path.join(target, 'index.js')];
-      const existing = candidates.find(candidate => fs.existsSync(candidate) && fs.statSync(candidate).isFile());
+      const existing = candidates.find(
+        (candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile(),
+      );
       if (!existing) throw new Error(`Missing local module ${match[1]}`);
-      const actualName = fs.readdirSync(path.dirname(existing)).find(name => name.toLowerCase() === path.basename(existing).toLowerCase());
-      if (actualName !== path.basename(existing)) throw new Error(`Module filename has incorrect casing: ${match[1]}`);
+      const actualName = fs
+        .readdirSync(path.dirname(existing))
+        .find((name) => name.toLowerCase() === path.basename(existing).toLowerCase());
+      if (actualName !== path.basename(existing))
+        throw new Error(`Module filename has incorrect casing: ${match[1]}`);
     }
   } catch (error) {
     console.error(`${file}: ${error.message}`);

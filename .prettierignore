@@ -1,0 +1,8 @@
+node_modules/
+.npm-cache/
+.uv-cache/
+.env*
+!.env.example
+coverage/
+package-lock.json
+jenkinsScript/

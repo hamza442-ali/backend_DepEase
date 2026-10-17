@@ -1,1 +1,2 @@
-module.exports = require('../controller/createPanelController');
+// Compatibility entry point for contributor branch imports.
+module.exports = require('../src/controllers/panel.controller');
