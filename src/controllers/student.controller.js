@@ -1,49 +1,19 @@
-const Student = require('../models/student.model');
+const students = require('../services/student.service');
 const { asyncHandler } = require('../utils/async-handler');
-const { HttpError } = require('../errors/http-error');
+
 exports.getStudent = asyncHandler(async (req, res) => {
-  const students = await Student.find({ registration_number: req.params.id });
-  if (
-    req.user.role === 'student' &&
-    students.some((student) => String(student._id) !== req.user.sub)
-  ) {
-    throw new HttpError(403, 'Insufficient permissions');
-  }
-  res.json(students);
+  res.json(await students.findByRegistrationNumber(req.params.id, req.user));
 });
 exports.getStudentById = asyncHandler(async (req, res) => {
-  const student = await Student.findById(req.params.id);
-  if (!student) throw new HttpError(404, 'Student not found');
-  if (req.user.role === 'student' && String(student._id) !== req.user.sub)
-    throw new HttpError(403, 'Insufficient permissions');
-  res.json(student);
+  res.json(await students.findById(req.params.id, req.user));
 });
-exports.getAllStudents = asyncHandler(async (req, res) => res.json(await Student.find()));
+exports.getAllStudents = asyncHandler(async (req, res) => {
+  res.json(await students.listStudents());
+});
 exports.createStudent = asyncHandler(async (req, res) => {
-  const {
-    student_name,
-    registration_number,
-    email_address,
-    password,
-    phone_number,
-    batch,
-    semester,
-    department,
-  } = req.body;
-  const student = await Student.create({
-    student_name,
-    registration_number,
-    email_address,
-    password,
-    phone_number,
-    batch,
-    semester,
-    department,
-  });
-  res.status(201).json(student);
+  res.status(201).json(await students.createStudent(req.body));
 });
 exports.deleteStudentById = asyncHandler(async (req, res) => {
-  const result = await Student.deleteOne({ registration_number: req.params.id });
-  if (!result.deletedCount) throw new HttpError(404, 'Student not found');
+  await students.deleteByRegistrationNumber(req.params.id);
   res.json({ message: 'Student deleted successfully' });
 });

@@ -1,15 +1,10 @@
-const express = require('express');
-const router = express.Router();
+const { staff } = require('../middleware/access');
+const { Router } = require('express');
+const router = Router();
 const announcementController = require('../controllers/supervisor-announcement.controller');
 
-// POST /api/announcements
-router.post(
-  '/add',
-  require('../middleware/authorize-roles').requireRoles('teacher', 'admin'),
-  announcementController.addAnnouncement,
-);
+router.post('/add', staff, announcementController.addAnnouncement);
 
-// GET /api/announcements/project/:ProjectId
 router.get('/getmine/:ProjectId', announcementController.getAnnouncementsByProjectId);
 
 module.exports = router;

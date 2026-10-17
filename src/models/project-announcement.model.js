@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Define the Announcement Schema
 const announcementSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -24,8 +23,6 @@ const announcementSchema = new mongoose.Schema({
   },
 });
 
-// Create the Announcement Model
 const Announcement = mongoose.model('Announcement', announcementSchema);
 
-// Export the model for use in other parts of your application
 module.exports = Announcement;

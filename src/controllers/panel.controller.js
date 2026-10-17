@@ -1,50 +1,18 @@
-const Panel = require('../models/panel.model');
-const { createCrudHandlers } = require('./crud-handlers');
+const panels = require('../services/panel.service');
 const { asyncHandler } = require('../utils/async-handler');
-const { HttpError } = require('../errors/http-error');
-const handlers = createCrudHandlers(Panel, 'Panel');
 
-const Assignment = require('../models/panel-assignment.model');
-exports.createPanel = handlers.create((req) => {
-  if (typeof req.body.id !== 'string' || !req.body.id.trim())
-    throw new HttpError(400, 'Panel ID is required');
-  return { id: req.body.id, teachers: req.body.teachers };
+exports.createPanel = asyncHandler(async (req, res) => {
+  res.status(201).json(await panels.createPanel(req.body));
 });
-exports.getAllPanels = handlers.list((req) => {
-  const id = req.query.id;
-  return id ? { id } : {};
+exports.getAllPanels = asyncHandler(async (req, res) => {
+  res.json(await panels.listPanels(req.query.id));
 });
 exports.deletePanelByID = asyncHandler(async (req, res) => {
-  // The route parameter is the exact business panel ID; never fall back to an empty filter.
-  const result = await Panel.deleteOne({ id: req.params.id });
-  if (!result.deletedCount) throw new HttpError(404, 'Panel not found');
-  res.json(result);
+  res.json(await panels.deletePanel(req.params.id));
 });
 exports.AssignPanel = asyncHandler(async (req, res) => {
-  const { studentIds, panelId } = req.body;
-  if (
-    !Array.isArray(studentIds) ||
-    !studentIds.length ||
-    studentIds.some((id) => typeof id !== 'string' || !id) ||
-    typeof panelId !== 'string' ||
-    !panelId
-  ) {
-    throw new HttpError(400, 'Student IDs and panel ID are required');
-  }
-  if (!(await Panel.exists({ id: panelId }))) throw new HttpError(404, 'Panel not found');
-  res.status(201).json(await Assignment.create({ studentIds: [...new Set(studentIds)], panelId }));
+  res.status(201).json(await panels.assignPanel(req.body.studentIds, req.body.panelId));
 });
 exports.editPanelIdByid = asyncHandler(async (req, res) => {
-  const { newPanelId } = req.body;
-  if (typeof newPanelId !== 'string' || !newPanelId.trim())
-    throw new HttpError(400, 'New panel ID is required');
-  const panel = handlers.requireRecord(
-    await Panel.findOneAndUpdate(
-      { id: req.params.id },
-      { $set: { id: newPanelId } },
-      { new: true, runValidators: true },
-    ),
-  );
-  await Assignment.updateMany({ panelId: req.params.id }, { $set: { panelId: newPanelId } });
-  res.json(panel);
+  res.json(await panels.renamePanel(req.params.id, req.body.newPanelId));
 });

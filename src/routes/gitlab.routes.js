@@ -1,9 +1,9 @@
-const express = require('express');
-const router = express.Router();
+const { Router } = require('express');
+const router = Router();
 
-const APIContoller = require('../controllers/gitlab.controller');
+const gitlabController = require('../controllers/gitlab.controller');
 
-router.post('/home', APIContoller.home);
-router.get('/Check', APIContoller.check);
+router.post('/home', gitlabController.home);
+router.get('/Check', gitlabController.check);
 
 module.exports = router;

@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Define the schema for the EvaluationForm
 const EvaluationSchema = new mongoose.Schema({
   totalWeightage: {
     type: Number,
@@ -30,6 +29,5 @@ const EvaluationSchema = new mongoose.Schema({
   },
 });
 
-// Create a model based on the schema
 const Evaluation = mongoose.model('Evaluation', EvaluationSchema);
 module.exports = Evaluation;

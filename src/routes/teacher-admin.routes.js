@@ -1,11 +1,9 @@
-const { requireRoles } = require('../middleware/authorize-roles');
-const admin = requireRoles('admin');
-const express = require('express');
-const router = express.Router({ caseSensitive: true });
+const { admin } = require('../middleware/access');
+const { Router } = require('express');
+const router = Router({ caseSensitive: true });
 
 const teacherController = require('../controllers/teacher.controller');
 
-// Define your routes here
 router.get('/getAll', admin, teacherController.getAllTeachers);
 router.get(['/getOne/:id', '/getOne:id'], admin, teacherController.getTeacherById);
 router.post('/create', admin, teacherController.createTeacher);

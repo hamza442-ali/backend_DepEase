@@ -1,9 +1,8 @@
-const express = require('express');
-const router = express.Router();
+const { Router } = require('express');
+const router = Router();
 
 const evaluationController = require('../controllers/evaluation.controller');
 
-// Get all evaluations
 router.get('/getAll', evaluationController.getAllEvaluations);
 
 module.exports = router;

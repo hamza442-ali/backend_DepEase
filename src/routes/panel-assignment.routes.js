@@ -1,9 +1,8 @@
-const express = require('express');
-const router = express.Router();
+const { Router } = require('express');
+const router = Router();
 
 const assignmentController = require('../controllers/panel-assignment.controller');
 
-//get by peanel id
 router.get('/getall', assignmentController.getAssignments);
 
 module.exports = router;

@@ -1,5 +1,5 @@
-const express = require('express');
-const router = express.Router();
+const { Router } = require('express');
+const router = Router();
 const {
   loginToJenkins,
   createJenkinsJob,
@@ -8,16 +8,12 @@ const {
   getDeploymentLink,
 } = require('../controllers/pipeline.controller');
 
-// Login route
 router.post('/login', loginToJenkins);
 
-// delete pipline route
 router.delete('/deletePipline', deleteJenkinsJob);
 
-// Create Pipeline route
 router.post('/createPipelineJob', createJenkinsJob);
 
-// build pipline route
 router.post('/buildPipline', buildJenkinsJob);
 
 router.post('/getDeploymentLink', getDeploymentLink);

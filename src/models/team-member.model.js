@@ -33,10 +33,6 @@ const teamMemberSchema = new mongoose.Schema({
     type: String,
     default: 'Member',
   },
-
-  // image: {
-  //   type: String,
-  // },
 });
 
 const TeamMember = mongoose.model('TeamMember', teamMemberSchema);

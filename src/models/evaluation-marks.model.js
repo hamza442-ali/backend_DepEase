@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Define the schema for the EvaluationForm
 const AddMarksSchema = new mongoose.Schema({
   ProjectId: {
     type: String,
@@ -54,6 +53,5 @@ const AddMarksSchema = new mongoose.Schema({
   },
 });
 
-// Create a model based on the schema
 const AddMarks = mongoose.model('AddMarks', AddMarksSchema);
 module.exports = AddMarks;

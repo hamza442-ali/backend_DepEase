@@ -1,67 +1,38 @@
-const Teacher = require('../models/teacher.model');
+const teachers = require('../services/teacher.service');
 const { asyncHandler } = require('../utils/async-handler');
-const { HttpError } = require('../errors/http-error');
-exports.getTeachers = asyncHandler(async (req, res) => res.json({ data: await Teacher.find() }));
-exports.getAllTeachers = asyncHandler(async (req, res) => res.json(await Teacher.find()));
+
+exports.getTeachers = asyncHandler(async (req, res) => {
+  res.json({ data: await teachers.listTeachers() });
+});
+exports.getAllTeachers = asyncHandler(async (req, res) => {
+  res.json(await teachers.listTeachers());
+});
 exports.getTeacherByRegistrationNumber = asyncHandler(async (req, res) => {
-  const teacher = await Teacher.findOne({ employeeId: req.params.registration_number });
-  if (!teacher) throw new HttpError(404, 'Teacher not found');
-  res.json({ data: teacher });
+  res.json({ data: await teachers.findByEmployeeId(req.params.registration_number) });
 });
 exports.getTeacherById = asyncHandler(async (req, res) => {
-  const teacher = await Teacher.findById(req.params.id);
-  if (!teacher) throw new HttpError(404, 'Teacher not found');
-  res.json(teacher);
+  res.json(await teachers.findById(req.params.id));
 });
 exports.createTeacher = asyncHandler(async (req, res) => {
-  const { name, employeeId, Designation, email, mobile, profilePicture, password } = req.body;
-  const teacher = await Teacher.create({
-    name,
-    employeeId,
-    Designation,
-    email,
-    mobile,
-    profilePicture,
-    passoword: password ?? req.body.passoword,
-  });
-  res.status(201).json(teacher);
+  res.status(201).json(await teachers.createTeacher(req.body));
 });
-function selectTeachers(selected, property) {
-  return asyncHandler(async (req, res) => {
-    const teachers = property ? req.body[property] : req.body;
-    if (
-      !Array.isArray(teachers) ||
-      !teachers.length ||
-      teachers.length > 500 ||
-      teachers.some((teacher) => typeof teacher?.employeeId !== 'string' || !teacher.employeeId)
-    ) {
-      throw new HttpError(400, 'Provide a non-empty list of teacher employee IDs');
-    }
-    const result = await Teacher.updateMany(
-      { employeeId: { $in: teachers.map((teacher) => teacher.employeeId) } },
-      { $set: { isSelected: selected } },
-    );
-    res.json({
-      message: 'Teachers updated successfully',
-      matchedCount: result.matchedCount,
-      modifiedCount: result.modifiedCount,
-    });
-  });
+function selectionResponse(result) {
+  return {
+    message: 'Teachers updated successfully',
+    matchedCount: result.matchedCount,
+    modifiedCount: result.modifiedCount,
+  };
 }
-exports.updateTeacherIsSelected = selectTeachers(true);
-exports.updateIsSelectedFalse = selectTeachers(false, 'teachers');
+exports.updateTeacherIsSelected = asyncHandler(async (req, res) => {
+  res.json(selectionResponse(await teachers.setSelected(req.body, true)));
+});
+exports.updateIsSelectedFalse = asyncHandler(async (req, res) => {
+  res.json(selectionResponse(await teachers.setSelected(req.body.teachers, false)));
+});
 exports.deleteTeacherById = asyncHandler(async (req, res) => {
-  const result = await Teacher.deleteOne({ employeeId: req.params.id });
-  if (!result.deletedCount) throw new HttpError(404, 'Teacher not found');
+  await teachers.deleteByEmployeeId(req.params.id);
   res.json({ message: 'Teacher deleted successfully' });
 });
 exports.editTeacherById = asyncHandler(async (req, res) => {
-  const teacher = await Teacher.findById(req.params.id);
-  if (!teacher) throw new HttpError(404, 'Teacher not found');
-  for (const field of ['name', 'Designation', 'mobile', 'profilePicture']) {
-    if (req.body[field] !== undefined) teacher[field] = req.body[field];
-  }
-  if (req.body.password !== undefined) teacher.passoword = req.body.password;
-  await teacher.save();
-  res.json(teacher);
+  res.json(await teachers.updateTeacher(req.params.id, req.body));
 });

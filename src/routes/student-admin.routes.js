@@ -1,15 +1,12 @@
-const { requireRoles } = require('../middleware/authorize-roles');
-const admin = requireRoles('admin');
+const { admin } = require('../middleware/access');
 
-const express = require('express');
-const router = express.Router();
+const { Router } = require('express');
+const router = Router();
 
 const studentController = require('../controllers/student.controller');
 
-// get all students
 router.get('/getAllStudents', admin, studentController.getAllStudents);
 
-// create student
 router.post('/create', admin, studentController.createStudent);
 
 router.delete('/delete/:id', admin, studentController.deleteStudentById);

@@ -1,17 +1,16 @@
-const express = require('express');
-const router = express.Router();
+const { Router } = require('express');
+const router = Router();
 
 const panelController = require('../controllers/panel.controller');
 
-// Create a new panel creation
 router.post('/createPanel', panelController.createPanel);
-//get all panels
+
 router.get('/getAllPanels', panelController.getAllPanels);
-// delete panel using id
+
 router.delete('/deletePanelbyID/:id', panelController.deletePanelByID);
-// Assign panel
+
 router.post('/assignPanel', panelController.AssignPanel);
-// editPanelIdByid
+
 router.put('/editPanelId/:id', panelController.editPanelIdByid);
 
 module.exports = router;

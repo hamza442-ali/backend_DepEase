@@ -1,2 +1,3 @@
-// Compatibility entry point for contributor branch imports.
-module.exports = require('./controllers/crud-handlers');
+// Compatibility facade for the original CRUD helper.
+const { createCrudHandlers } = require('./controllers/crud-handlers');
+module.exports = { crud: createCrudHandlers, createCrudHandlers };
