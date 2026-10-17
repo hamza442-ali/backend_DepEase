@@ -1,11 +1,12 @@
 const { Router } = require('express');
-const router = Router();
 const addMarksController = require('../controllers/evaluation-marks.controller');
 
-router.post('/add', addMarksController.createAddMarks);
-router.get('/getall', addMarksController.getAllAddMarks);
-router.get('/getmine/:ProjectId', addMarksController.getAddMarksByProjectId);
-router.put('/update/:ProjectId', addMarksController.updateAddMarks);
-router.delete('/delete/:id', addMarksController.deleteAddMarks);
+const router = Router();
+
+router.post('/add', addMarksController.createMarks);
+router.get('/getall', addMarksController.listMarks);
+router.get('/getmine/:ProjectId', addMarksController.listProjectMarks);
+router.put('/update/:ProjectId', addMarksController.updateProjectMarks);
+router.delete('/delete/:id', addMarksController.deleteMarks);
 
 module.exports = router;

@@ -8,10 +8,10 @@ exports.createResourceRequest = handlers.create((req) => {
   return req.body;
 });
 exports.getResourceRequests = handlers.list();
-exports.getResourceRequestsbyProjectid = handlers.list((req) => ({
+exports.listProjectResourceRequests = handlers.list((req) => ({
   projectId: req.params.projectId,
 }));
-exports.getResourceRequestsbyTeacherid = handlers.list((req) => ({
+exports.listTeacherResourceRequests = handlers.list((req) => ({
   TeacherId: req.params.TeacherId,
 }));
 exports.getResourceRequestById = handlers.get();

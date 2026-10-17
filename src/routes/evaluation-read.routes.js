@@ -1,7 +1,8 @@
 const { Router } = require('express');
-const router = Router();
 
 const evaluationController = require('../controllers/evaluation.controller');
+
+const router = Router();
 
 router.get('/getAll', evaluationController.getAllEvaluations);
 

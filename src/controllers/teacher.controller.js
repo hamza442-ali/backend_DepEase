@@ -7,7 +7,7 @@ exports.getTeachers = asyncHandler(async (req, res) => {
 exports.getAllTeachers = asyncHandler(async (req, res) => {
   res.json(await teachers.listTeachers());
 });
-exports.getTeacherByRegistrationNumber = asyncHandler(async (req, res) => {
+exports.getTeacherByEmployeeId = asyncHandler(async (req, res) => {
   res.json({ data: await teachers.findByEmployeeId(req.params.registration_number) });
 });
 exports.getTeacherById = asyncHandler(async (req, res) => {
@@ -23,16 +23,16 @@ function selectionResponse(result) {
     modifiedCount: result.modifiedCount,
   };
 }
-exports.updateTeacherIsSelected = asyncHandler(async (req, res) => {
+exports.selectTeachers = asyncHandler(async (req, res) => {
   res.json(selectionResponse(await teachers.setSelected(req.body, true)));
 });
-exports.updateIsSelectedFalse = asyncHandler(async (req, res) => {
+exports.clearTeacherSelection = asyncHandler(async (req, res) => {
   res.json(selectionResponse(await teachers.setSelected(req.body.teachers, false)));
 });
-exports.deleteTeacherById = asyncHandler(async (req, res) => {
+exports.deleteTeacherByEmployeeId = asyncHandler(async (req, res) => {
   await teachers.deleteByEmployeeId(req.params.id);
   res.json({ message: 'Teacher deleted successfully' });
 });
-exports.editTeacherById = asyncHandler(async (req, res) => {
+exports.updateTeacher = asyncHandler(async (req, res) => {
   res.json(await teachers.updateTeacher(req.params.id, req.body));
 });

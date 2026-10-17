@@ -1,12 +1,13 @@
 const { Router } = require('express');
-const router = Router();
 const moduleController = require('../controllers/project-module.controller');
+
+const router = Router();
 
 router.post('/add', moduleController.createModule);
 
 router.get('/getall', moduleController.getModules);
 
-router.get('/getmine/:projectId', moduleController.getModuleById);
+router.get('/getmine/:projectId', moduleController.listProjectModules);
 
 router.put('/update/:id', moduleController.updateModule);
 

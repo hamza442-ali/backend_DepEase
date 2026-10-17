@@ -1,18 +1,19 @@
 const { Router } = require('express');
-const router = Router();
 const projectController = require('../controllers/project.controller');
 
+const router = Router();
+
 router.post('/add', projectController.createProject);
-router.get('/getall', projectController.getAllProject);
+router.get('/getall', projectController.listProjects);
 
-router.get('/getmine/:id', projectController.getMineProject);
+router.get('/getmine/:id', projectController.getProjectById);
 
-router.get('/getallmine/:teacher', projectController.getAllMineProject);
+router.get('/getallmine/:teacher', projectController.listProjectsByTeacher);
 
-router.get('/getone/:group', projectController.getProjectBygroup);
+router.get('/getone/:group', projectController.listProjectsByGroup);
 
-router.put('/update/:projectId', projectController.updateProjectById);
+router.put('/update/:projectId', projectController.updateProject);
 
-router.delete('/delete/:projectId', projectController.deleteProjectById);
+router.delete('/delete/:projectId', projectController.deleteProject);
 
 module.exports = router;

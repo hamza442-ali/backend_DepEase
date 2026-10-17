@@ -7,7 +7,7 @@
 - Abdullah: `4ca2313`, project workflow, documents, email, modules/tasks/team members, Jenkins bridge, login and Docker packaging.
 - Mahad: `d6f7793`, additional scheduler and model work on the Abdullah branch family.
 
-The Hamza history and the Abdullah/Mahad history have different roots. Integration uses an explicit merge of unrelated histories, preserving all three contributor tips as ancestors. Shared model imports now forward to the canonical `model/` definitions; legacy controller entry points forward to `controller/`. `LegacyProjectIdea` retains Mahad's unused alternative idea schema under a distinct model/collection name to avoid overwriting `ProjectIdea`. No records are automatically copied or migrated into that unused collection.
+The Hamza history and the Abdullah/Mahad history have different roots. Integration uses an explicit merge of unrelated histories, preserving all three contributor tips as ancestors. Shared model imports now forward to the canonical `src/models/` definitions; legacy controller and router entry points forward to `src/controllers/` and `src/routes/`. `LegacyProjectIdea` retains Mahad's unused alternative idea schema under a distinct model/collection name to avoid overwriting `ProjectIdea`. No records are automatically copied or migrated into that unused collection.
 
 ## Changes
 
@@ -22,11 +22,11 @@ The Hamza history and the Abdullah/Mahad history have different roots. Integrati
 - Add upload compensation, safer deletion ordering, SMTP configuration and private Jenkins bridge authentication. Jenkins builds follow the actual queue item and use bounded polling.
 - Replace colliding `DockerFile` / `Dockerfile` paths with one Dockerfile, use a non-root runtime, and add health endpoints, setup documentation and CI.
 
-## Verification in this workspace
+## Current refactor status
 
-JavaScript syntax/local-import checks and eight dependency-free unit tests passed. Full npm installation was blocked by network EACCES failures. Express/Mongoose route tests, MongoDB integration tests, Python bridge tests and Docker image builds have been added but could not run locally: npm dependencies could not be downloaded, no Python interpreter is installed, and Docker daemon access is denied. Do not interpret the local unit pass as full integration validation.
+The clean-code refactor is delivered in separate commits on `refactor/backend-clean-architecture` and then merged into `main`. Hamza, Mahad, Abdullah, and existing patch branches are retained. GitHub access is available and pushes are performed through the existing origin remote.
 
-GitHub SSH and HTTPS access are unavailable, and the GitHub connector is not connected. Remote branch freshness and publication could not be verified. Local history records the integration without rewriting contributor branches.
+Local functional test runs are deferred for this structural refactor at the user's request. The earlier integration passed its baseline Node unit/API tests before this deferral; that does not establish a test pass for the subsequent refactor. Static import/syntax and formatting checks are kept separate from functional verification. GitHub Actions continues to run automatically on pushed commits.
 
 ## Before deployment
 
@@ -34,7 +34,7 @@ GitHub SSH and HTTPS access are unavailable, and the GitHub connector is not con
 2. Run all CI checks and live smoke tests against staging. Configure the admin teacher allowlist and create/reset accounts as described in the README. Existing browser sessions must sign in again.
 3. Update the frontend's admin authentication and API client to send bearer tokens on Hamza's formerly open routes. Preserve the teacher-list path casing noted in the README. This backend change does not update either frontend branch.
 4. Complete project-level authorization: several legacy project, task, resource, document, proposal and team routes still accept project IDs from any authenticated user. The new role guards do not establish team ownership across these models. Define student, team lead, supervisor, panel and admin permissions before exposing the merged service to untrusted users.
-5. Audit and upgrade npm dependencies with a regenerated lockfile and regression runs. The original Node dependency versions are intentionally retained because package installation and dependency validation were unavailable here; this refactor is not a dependency vulnerability clearance.
+5. Audit and upgrade npm dependencies with a regenerated lockfile and regression runs. The original Node dependency versions are intentionally retained to keep dependency upgrades separate from the structural refactor; this refactor is not a dependency vulnerability clearance.
 6. Use isolated Jenkins agents with restricted IAM/network permissions for repository-controlled Jenkinsfiles. The bridge authenticates calls; it does not sandbox build code. Add durable build-status tracking and recovery for builds exceeding the synchronous polling window.
 7. Add transactional handling for multi-document panel renames, persisted job operations, pagination and database indexes after checking existing data. The in-process login limiter needs a shared store and correctly configured proxy trust when deploying multiple API replicas.
 

@@ -1,6 +1,7 @@
 const { Router } = require('express');
-const router = Router();
 const schedulerController = require('../controllers/project-scheduler.controller');
+
+const router = Router();
 
 router.post('/scheduler', schedulerController.createScheduler);
 

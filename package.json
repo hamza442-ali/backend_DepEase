@@ -9,7 +9,9 @@
     "check": "node scripts/check.js",
     "test": "node --test tests/*.test.js tests/unit/*.test.js",
     "test:unit": "node --test tests/unit/*.test.js",
-    "test:integration": "node --test tests/integration/*.test.js"
+    "test:integration": "node --test tests/integration/*.test.js",
+    "format": "prettier --write src scripts index.js package.json",
+    "format:check": "prettier --check src scripts index.js package.json"
   },
   "keywords": [],
   "author": "",

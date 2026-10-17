@@ -17,7 +17,7 @@ Create a local, ignored `admin-account.local.json` file with teacher fields: `na
 
 `Get-Content .\admin-account.local.json | node scripts/create-account.js teacher`
 
-On Bash, use `node scripts/create-account.js teacher < admin-account.local.json`. Delete the local input file after use. The script hashes passwords and never prints the input. The same script accepts `student` with the fields in `model/studentModel.js`.
+On Bash, use `node scripts/create-account.js teacher < admin-account.local.json`. Delete the local input file after use. The script hashes passwords and never prints the input. The same script accepts `student` with the fields in `src/models/student.model.js`.
 
 For an existing account, supply a local JSON file containing `email` and `password` to `scripts/reset-password.js teacher` (or `student`) through standard input. Database access is required; this is an operator command, not a public registration API.
 
@@ -42,6 +42,12 @@ Cloudinary, SMTP, and Jenkins are optional. Populate their variables in `.env.ex
 Document uploads use a 10 MiB default memory limit, configurable with `UPLOAD_MAX_BYTES`. SMTP sends from `SMTP_FROM` and uses the authenticated email as Reply-To. No service credentials are stored in source.
 
 The Jenkins bridge requires Python 3.12. Install `jenkinsScript/requirements.txt`, provide its environment variables, and run Gunicorn from that directory as configured in its Dockerfile. `python jenkins.py` binds to localhost for development. Use a dedicated Jenkins API token and the same fresh `JENKINS_BRIDGE_TOKEN` in Node and Python. Keep the bridge private. Jobs require a repository-hosted Jenkinsfile on main; GitHub, GitLab and Bitbucket HTTPS URLs are supported. Build polling follows the newly returned queue item for up to 90 seconds; long builds return 202. Console logs are not returned to clients. The frontend needs a later build-status view for long-running jobs.
+
+## Source structure
+
+The canonical implementation lives in `src/`. See [architecture](docs/ARCHITECTURE.md) for module responsibilities and contributor compatibility paths. Old root-level imports are supported through small forwarding files.
+
+Use `npm run format` to format application code and `npm run format:check` to check formatting. This structural refactor preserves existing HTTP contracts and MongoDB fields.
 
 ## Checks
 

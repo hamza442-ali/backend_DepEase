@@ -1,6 +1,7 @@
 const { Router } = require('express');
+const announcementController = require('../controllers/admin-announcement-management.controller');
+
 const router = Router();
-const announcementController = require('../controllers/makeAnnouncemenetController');
 
 router.post('/add', announcementController.makeAnnouncement);
 

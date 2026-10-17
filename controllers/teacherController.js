@@ -1,2 +1,10 @@
-// Compatibility entry point for contributor branch imports.
-module.exports = require('../src/controllers/teacher.controller');
+// Compatibility names for contributor branch imports.
+const controller = require('../src/controllers/teacher.controller');
+module.exports = {
+  ...controller,
+  getTeacherByRegistrationNumber: controller.getTeacherByEmployeeId,
+  updateTeacherIsSelected: controller.selectTeachers,
+  updateIsSelectedFalse: controller.clearTeacherSelection,
+  deleteTeacherById: controller.deleteTeacherByEmployeeId,
+  editTeacherById: controller.updateTeacher,
+};

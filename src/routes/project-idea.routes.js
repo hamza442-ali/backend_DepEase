@@ -1,7 +1,8 @@
 const { staff } = require('../middleware/access');
 const { Router } = require('express');
-const router = Router();
 const projectIdeasController = require('../controllers/project-idea.controller');
+
+const router = Router();
 
 router.get('/getall', projectIdeasController.getAllProjectIdeas);
 

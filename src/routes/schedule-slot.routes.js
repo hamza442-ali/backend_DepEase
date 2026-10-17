@@ -1,8 +1,9 @@
 const { Router } = require('express');
-const router = Router();
 
 const schedulingController = require('../controllers/schedule-slot.controller');
 const { staff } = require('../middleware/access');
+
+const router = Router();
 
 router.get('/getAll', schedulingController.getAll);
 

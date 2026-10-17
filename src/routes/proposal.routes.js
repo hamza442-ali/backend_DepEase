@@ -1,6 +1,7 @@
 const { Router } = require('express');
-const router = Router();
 const proposalController = require('../controllers/proposal.controller');
+
+const router = Router();
 
 router.post('/add', proposalController.createProposal);
 

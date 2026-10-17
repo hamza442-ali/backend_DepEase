@@ -1,2 +1,6 @@
-// Compatibility entry point for contributor branch imports.
-module.exports = require('../src/controllers/deliverable.controller');
+// Compatibility names for contributor branch imports.
+const controller = require('../src/controllers/deliverable.controller');
+module.exports = {
+  ...controller,
+  getDeliverableById: controller.listProjectDeliverables,
+};

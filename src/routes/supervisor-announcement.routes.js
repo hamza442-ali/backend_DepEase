@@ -1,7 +1,8 @@
 const { staff } = require('../middleware/access');
 const { Router } = require('express');
-const router = Router();
 const announcementController = require('../controllers/supervisor-announcement.controller');
+
+const router = Router();
 
 router.post('/add', staff, announcementController.addAnnouncement);
 

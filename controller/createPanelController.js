@@ -1,2 +1,8 @@
-// Compatibility entry point for contributor branch imports.
-module.exports = require('../src/controllers/panel.controller');
+// Compatibility names for contributor branch imports.
+const controller = require('../src/controllers/panel.controller');
+module.exports = {
+  ...controller,
+  AssignPanel: controller.assignPanel,
+  editPanelIdByid: controller.renamePanel,
+  deletePanelByID: controller.deletePanel,
+};

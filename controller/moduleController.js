@@ -1,2 +1,6 @@
-// Compatibility entry point for contributor branch imports.
-module.exports = require('../src/controllers/project-module.controller');
+// Compatibility names for contributor branch imports.
+const controller = require('../src/controllers/project-module.controller');
+module.exports = {
+  ...controller,
+  getModuleById: controller.listProjectModules,
+};

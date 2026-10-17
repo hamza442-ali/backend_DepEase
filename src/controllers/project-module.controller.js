@@ -4,6 +4,6 @@ const handlers = createCrudHandlers(ProjectModule, 'Module');
 
 exports.createModule = handlers.create();
 exports.getModules = handlers.list();
-exports.getModuleById = handlers.list((req) => ({ projectId: req.params.projectId }));
+exports.listProjectModules = handlers.list((req) => ({ projectId: req.params.projectId }));
 exports.updateModule = handlers.update();
 exports.deleteModule = handlers.remove();
