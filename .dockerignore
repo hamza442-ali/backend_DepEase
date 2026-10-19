@@ -1,4 +1,6 @@
 .git
+.local
+data
 .env
 .env.*
 !.env.example

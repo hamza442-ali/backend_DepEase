@@ -1,0 +1,82 @@
+services:
+  mongo:
+    image: mongo:7
+    command: [mongod, --replSet, rs0, --bind_ip_all]
+    volumes: [mongo-data:/data/db]
+    healthcheck:
+      test: [CMD, mongosh, --quiet, --eval, "db.runCommand({ping:1}).ok"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+  mongo-init:
+    image: mongo:7
+    depends_on:
+      mongo: {condition: service_healthy}
+    entrypoint: [mongosh, --host, mongo, --quiet, --eval]
+    command:
+      - "try { rs.status() } catch (e) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongo:27017'}]}) }; let attempts=0; while (!db.hello().isWritablePrimary && attempts++<120) sleep(500); if (!db.hello().isWritablePrimary) quit(1)"
+
+  bootstrap:
+    image: depease-api:local
+    build: .
+    depends_on:
+      mongo-init: {condition: service_completed_successfully}
+    environment:
+      LOCAL_BOOTSTRAP: "true"
+      ATLAS_URI: mongodb://mongo:27017/depease?directConnection=true
+      SECRET_KEY: ${DEPEASE_SECRET_KEY:?Run scripts/start-local.ps1 first}
+      ADMIN_EMAILS: ${DEPEASE_ADMIN_EMAIL:?Configure the local administrator}
+      DEPEASE_ADMIN_EMAIL: ${DEPEASE_ADMIN_EMAIL}
+      DEPEASE_ADMIN_PASSWORD: ${DEPEASE_ADMIN_PASSWORD:?Generate local credentials}
+    command: [node, scripts/bootstrap-local.js]
+
+  api:
+    image: depease-api:local
+    build: .
+    depends_on:
+      bootstrap: {condition: service_completed_successfully}
+    ports: [127.0.0.1:3001:3001]
+    volumes: [uploads:/app/data/uploads]
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      ATLAS_URI: mongodb://mongo:27017/depease?directConnection=true
+      SECRET_KEY: ${DEPEASE_SECRET_KEY}
+      ADMIN_EMAILS: ${DEPEASE_ADMIN_EMAIL}
+      CORS_ORIGINS: http://localhost:8080,http://localhost:5173
+      DOCUMENT_STORAGE: ${DOCUMENT_STORAGE:-local}
+      UPLOAD_DIR: /app/data/uploads
+      CLOUDINARY_NAME: ${CLOUDINARY_NAME:-}
+      CLOUDINARY_KEY: ${CLOUDINARY_KEY:-}
+      CLOUDINARY_SECRET: ${CLOUDINARY_SECRET:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      JENKINS_BRIDGE_URL: http://bridge:5000
+      JENKINS_BRIDGE_TOKEN: ${JENKINS_BRIDGE_TOKEN:-}
+
+  frontend:
+    image: depease-frontend:local
+    build:
+      context: ../Frontend_DepEase
+      args:
+        VITE_API_URL: http://localhost:3001
+    depends_on:
+      api: {condition: service_healthy}
+    ports: [127.0.0.1:8080:80]
+
+  bridge:
+    profiles: [jenkins]
+    build: jenkinsScript
+    environment:
+      JENKINS_BRIDGE_TOKEN: ${JENKINS_BRIDGE_TOKEN:-}
+      JENKINS_URL: ${JENKINS_URL:-}
+      JENKINS_USER: ${JENKINS_USER:-}
+      JENKINS_API_TOKEN: ${JENKINS_API_TOKEN:-}
+
+volumes:
+  mongo-data:
+  uploads:

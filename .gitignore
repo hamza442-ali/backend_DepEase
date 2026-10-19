@@ -29,3 +29,5 @@ yarn-error.log*
 *.local.json
 __pycache__/
 .venv/
+data/
+.local/

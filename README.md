@@ -2,18 +2,32 @@
 
 The backend combines the Hamza, Mahad, and Abdullah feature histories in one application. Node.js 22+ and MongoDB are required. The frontend and infrastructure remain separate repositories.
 
-## Local setup
+## Run the complete local product (Windows)
 
-1. Run `npm ci`.
-2. Copy `.env.example` to `.env`, set a MongoDB URI, and generate a fresh `SECRET_KEY` of at least 32 random bytes. Example: `node -e "console.log(require('node:crypto').randomBytes(48).toString('hex'))"`.
-3. Set `ADMIN_EMAILS` to the email addresses of teacher accounts that should administer the application.
-4. Run `npm start`. The default port is 3001. Development mode: `npm run dev`.
+Clone `Frontend_DepEase` beside this backend directory. Start Docker Desktop, then run:
 
-Startup validates required configuration and connects to MongoDB before listening. SIGTERM and SIGINT close the HTTP server and database connection.
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-local.ps1
+```
+
+Open **http://localhost:8080**, select **Administrator**, and sign in as **admin@hamza.com**. The generated password is stored only in the ignored `.local/credentials.local.json` file. The script reuses that password on later runs; it does not reset accounts. The sole admin email is configured through `ADMIN_EMAILS`. Other teacher accounts receive the teacher role and cannot use administrator pages or APIs.
+
+The stack creates a private MongoDB replica set, the API, and the production frontend. MongoDB data and document uploads persist in Docker volumes. Only the frontend (8080) and API (3001) are published, bound to the local computer. `scripts/stop-local.ps1` stops the stack and keeps its data. Running the start script again rebuilds changed code and starts it again. Keep the `.local` directory private and backed up with your local configuration.
+
+Use **People** to create teacher and student accounts. Students select **Student** at sign-in and submit a proposal with two registered teammates. Teachers select **Teacher**. Start with Projects, Requirements, Task board, Documents, and Messages. Registered users can exchange internal messages without SMTP.
+
+## Manual setup
+
+1. Run `npm ci` using Node.js 22 or newer.
+2. Copy `.env.example` to `.env`. Configure a MongoDB replica set or Atlas cluster; transactions are required for proposal submission, project archival, and panel updates.
+3. Generate a fresh `SECRET_KEY` of at least 32 random bytes and set `ADMIN_EMAILS=admin@hamza.com`.
+4. Create the administrator account using the operator instructions below, then run `npm start` (port 3001). Development mode: `npm run dev`.
+
+Startup validates configuration, connects to MongoDB, and initializes the critical enrollment/idempotency indexes before accepting requests. SIGTERM and SIGINT close the HTTP server and database connection.
 
 ## First administrator
 
-Create a local, ignored `admin-account.local.json` file with teacher fields: `name`, `employeeId`, `email`, `mobile`, `Designation`, and `password` (8?1024 characters). Use a strong, unique password. Add that email to `ADMIN_EMAILS` and run:
+Create a local, ignored `admin-account.local.json` file with teacher fields: `name`, `employeeId`, `email`, `mobile`, `Designation`, and `password` (8-1024 characters). Use a strong, unique password. Add that email to `ADMIN_EMAILS` and run:
 
 `Get-Content .\admin-account.local.json | node scripts/create-account.js teacher`
 
@@ -37,9 +51,11 @@ See [integration notes](docs/BACKEND_INTEGRATION.md) for branch provenance, roll
 
 ## Optional services
 
-Cloudinary, SMTP, and Jenkins are optional. Populate their variables in `.env.example` when using those endpoints. The Node process reads `.env`; the Python bridge reads process environment variables and does not automatically load that file.
+Local document storage and internal messages work without external services. Cloudinary, SMTP, and Jenkins are optional. Configure their variables in your ignored `.env` when enabling them. The Node process reads `.env`; the Python bridge reads process environment variables and does not automatically load that file.
 
-Document uploads use a 10 MiB default memory limit, configurable with `UPLOAD_MAX_BYTES`. SMTP sends from `SMTP_FROM` and uses the authenticated email as Reply-To. No service credentials are stored in source.
+For the Docker stack, add optional service variables to the ignored `.local/compose.env` instead. SMTP uses `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, and `SMTP_FROM`. Cloudinary uses the three `CLOUDINARY_*` values and `DOCUMENT_STORAGE=cloudinary`. For Jenkins, provide `JENKINS_URL`, `JENKINS_USER`, `JENKINS_API_TOKEN`, and a fresh `JENKINS_BRIDGE_TOKEN` of at least 32 characters, then start with `scripts/start-local.ps1 -WithJenkins`. Do not put credentials in frontend build variables.
+
+Documents default to protected local storage (`DOCUMENT_STORAGE=local`, `UPLOAD_DIR=data/uploads`). Back up the uploads directory/volume with MongoDB. Downloads require a valid bearer token and project access; local files are never exposed as public static assets. Existing Cloudinary documents retain their provider and remain readable. To use Cloudinary for new uploads, set `DOCUMENT_STORAGE=cloudinary` and its credentials. Document uploads use a 10 MiB default memory limit, configurable with `UPLOAD_MAX_BYTES`. SMTP sends from `SMTP_FROM` and uses the authenticated email as Reply-To. No service credentials are stored in source.
 
 The Jenkins bridge requires Python 3.12. Install `jenkinsScript/requirements.txt`, provide its environment variables, and run Gunicorn from that directory as configured in its Dockerfile. `python jenkins.py` binds to localhost for development. Use a dedicated Jenkins API token and the same fresh `JENKINS_BRIDGE_TOKEN` in Node and Python. Keep the bridge private. Jobs require a repository-hosted Jenkinsfile on main; GitHub, GitLab and Bitbucket HTTPS URLs are supported. Build polling follows the newly returned queue item for up to 90 seconds; long builds return 202. Console logs are not returned to clients. The frontend needs a later build-status view for long-running jobs.
 
@@ -54,7 +70,7 @@ Use `npm run format` to format application code and `npm run format:check` to ch
 - `npm run check`: parse all JavaScript and verify local module paths, including filename case.
 - `npm run test:unit`: dependency-free configuration, password, request validation and error-handling tests.
 - `npm test`: unit tests plus Express route and model loading tests; requires installed npm dependencies.
-- `npm run test:integration`: requires `TEST_MONGODB_URI=mongodb://127.0.0.1:27017/depease_test`. Uses and drops an isolated process-specific database; refuses other hosts and database names.
+- `npm run test:integration`: requires a local replica set and `TEST_MONGODB_URI=mongodb://127.0.0.1:27017/depease_test?directConnection=true`. Uses and drops an isolated process-specific database; refuses other hosts and database names.
 - `python -m unittest discover -s jenkinsScript/tests`: bridge regressions using mocked Jenkins calls.
 
 GitHub Actions installs dependencies, runs these checks against MongoDB, and builds both Docker images. Tests do not use the developer's `.env` or contact production services.
