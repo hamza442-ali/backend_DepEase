@@ -39,3 +39,23 @@ jobs:
       - run: pip install -r jenkinsScript/requirements.txt
       - run: python -m unittest discover -s jenkinsScript/tests
       - run: docker build -t depease-bridge:test jenkinsScript
+  jenkins-local:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t depease-jenkins:test jenkins-local/controller
+      - run: docker build -t depease-agent:test jenkins-local/agent
+      - name: Verify secured local bootstrap
+        run: |
+          docker run -d --name jenkins-bootstrap -e LOCAL_JENKINS_BOOTSTRAP=true -e DEPEASE_JENKINS_ADMIN_PASSWORD=ci-only-disposable-password-2026-strong -e JAVA_OPTS='-Djenkins.install.runSetupWizard=false -Xmx768m' depease-jenkins:test
+          ready=false
+          for attempt in $(seq 1 90); do
+            if docker exec jenkins-bootstrap sh -c 'test -s /run/depease-api/api-token && test -s /run/depease-agent/agent-secret'; then
+              ready=true
+              break
+            fi
+            sleep 2
+          done
+          test "$ready" = true
+          docker exec jenkins-bootstrap sh -c 'test "$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/json)" = 403'

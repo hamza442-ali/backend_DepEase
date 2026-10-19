@@ -21,6 +21,7 @@ const PROJECT_FIELDS = new Map([
   ['SuperAnnouncement', 'ProjectId'],
   ['AddMarks', 'ProjectId'],
   ['Pipeline', 'ProjectId'],
+  ['PipelineBuild', 'ProjectId'],
   ['Scheduler', 'Project'],
 ]);
 const admin = (req) => req.user.role === 'admin';

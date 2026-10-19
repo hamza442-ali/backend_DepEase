@@ -21,6 +21,8 @@ def call(session, method, url, accepted_statuses=None, **kwargs):
     if accepted_statuses is not None:
         if response.status_code not in accepted_statuses:
             raise BridgeError('Jenkins deletion failed', 502)
+    elif response.status_code in (401, 403):
+        raise BridgeError('Jenkins rejected the configured credentials or permissions', 502)
     elif response.status_code >= 400 or response.status_code in REDIRECT_STATUSES:
         raise BridgeError('Jenkins request failed', 502)
     return response

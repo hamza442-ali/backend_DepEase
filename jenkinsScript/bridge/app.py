@@ -4,6 +4,7 @@ from flask import Flask, jsonify, request
 from werkzeug.exceptions import HTTPException
 
 from . import services
+from . import runs
 from .auth import authenticate_bridge
 from .config import MAX_CONTENT_LENGTH
 from .errors import BridgeError
@@ -13,6 +14,22 @@ def create_app():
     app = Flask(__name__)
     app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
     app.before_request(authenticate_bridge)
+
+    @app.get('/connection')
+    def connection():
+        return jsonify(runs.connection())
+
+    @app.post('/start_build')
+    def start_build():
+        return jsonify(runs.start(request.get_json(silent=True))), 202
+
+    @app.post('/build_status')
+    def build_status():
+        return jsonify(runs.status(request.get_json(silent=True)))
+
+    @app.post('/cancel_build')
+    def cancel_build():
+        return jsonify(runs.cancel(request.get_json(silent=True)))
 
     @app.errorhandler(BridgeError)
     def bridge_error(error):

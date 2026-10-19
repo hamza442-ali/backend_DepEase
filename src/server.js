@@ -16,7 +16,9 @@ async function startServer(env = process.env) {
   try {
     // Request idempotency and group enrollment rely on these database constraints.
     await Promise.all(
-      ['Group', 'Project', 'Proposal', 'Panel'].map((name) => mongoose.model(name).init()),
+      ['Group', 'Project', 'Proposal', 'Panel', 'Pipeline', 'PipelineBuild'].map((name) =>
+        mongoose.model(name).init(),
+      ),
     );
     server = await listen(app, config.port);
   } catch (error) {
