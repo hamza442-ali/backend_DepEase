@@ -24,8 +24,34 @@ if (-not (Test-Path -LiteralPath $environmentPath)) {
   [IO.File]::WriteAllText((Join-Path $localPath 'credentials.local.json'), $credentials, $encoding)
 }
 $profileArguments = @()
-if ($WithJenkins) { $profileArguments = @('--profile', 'jenkins') }
-docker compose --project-directory $repositoryPath --env-file $environmentPath -f (Join-Path $repositoryPath 'compose.local.yml') -p depease-local @profileArguments up -d --build --wait
+$composeArguments = @('-f', (Join-Path $repositoryPath 'compose.local.yml'))
+$jenkinsCredentialsPath = Join-Path $localPath 'jenkins-credentials.local.json'
+$useLocalJenkins = $WithJenkins -or (Test-Path -LiteralPath $jenkinsCredentialsPath)
+if ($useLocalJenkins) {
+  $localEnvironment = [IO.File]::ReadAllText($environmentPath)
+  $encoding = New-Object Text.UTF8Encoding($false)
+  foreach ($key in @('JENKINS_BRIDGE_TOKEN', 'DEPEASE_JENKINS_ADMIN_PASSWORD')) {
+    if ($localEnvironment -notmatch "(?m)^$key=") {
+      $bytes = New-Object byte[] $(if ($key -eq 'DEPEASE_JENKINS_ADMIN_PASSWORD') {32} else {48})
+      $rng = [Security.Cryptography.RandomNumberGenerator]::Create()
+      $rng.GetBytes($bytes)
+      $rng.Dispose()
+      $generated = ([BitConverter]::ToString($bytes)).Replace('-','').ToLowerInvariant()
+      $localEnvironment += "`n$key=$generated`n"
+    }
+  }
+  [IO.File]::WriteAllText($environmentPath, $localEnvironment, $encoding)
+  $match = [regex]::Match($localEnvironment, '(?m)^DEPEASE_JENKINS_ADMIN_PASSWORD=([^\r\n]+)')
+  $jenkinsCredentials = @{ username='depease-admin'; password=$match.Groups[1].Value; url='http://localhost:8082' } | ConvertTo-Json
+  [IO.File]::WriteAllText($jenkinsCredentialsPath, $jenkinsCredentials, $encoding)
+  $profileArguments = @('--profile', 'jenkins')
+  $composeArguments += @('-f', (Join-Path $repositoryPath 'compose.jenkins.yml'))
+}
+docker compose --project-directory $repositoryPath --env-file $environmentPath @composeArguments -p depease-local @profileArguments up -d --build --wait
 if ($LASTEXITCODE -ne 0) { throw 'Local startup failed. Inspect docker compose logs before retrying.' }
 Write-Output 'DepEase is ready at http://localhost:8080'
 Write-Output "Administrator credentials: $(Join-Path $localPath 'credentials.local.json')"
+if ($useLocalJenkins) {
+  Write-Output 'Local Jenkins: http://localhost:8082 (builds run on the separate development agent)'
+  Write-Output "Jenkins administrator credentials: $jenkinsCredentialsPath"
+}

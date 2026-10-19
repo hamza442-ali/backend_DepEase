@@ -1,0 +1,70 @@
+services:
+  api:
+    environment:
+      JENKINS_PUBLIC_URL: http://localhost:8082
+
+  jenkins:
+    restart: unless-stopped
+    build: jenkins-local/controller
+    image: depease-jenkins:local
+    ports: [127.0.0.1:8082:8080]
+    networks: [jenkins-control, jenkins-build]
+    volumes:
+      - jenkins-home:/var/jenkins_home
+      - jenkins-api:/run/depease-api
+      - jenkins-agent-secret:/run/depease-agent
+    environment:
+      JAVA_OPTS: -Djenkins.install.runSetupWizard=false -Xms256m -Xmx768m
+      LOCAL_JENKINS_BOOTSTRAP: "true"
+      DEPEASE_JENKINS_ADMIN_PASSWORD: ${DEPEASE_JENKINS_ADMIN_PASSWORD:?Run start-local.ps1 -WithJenkins}
+    healthcheck:
+      test: [CMD-SHELL, "test -s /run/depease-api/api-token && curl -fsS http://localhost:8080/login > /dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 90
+      start_period: 30s
+
+  jenkins-agent:
+    restart: unless-stopped
+    build: jenkins-local/agent
+    image: depease-jenkins-agent:local
+    networks: [jenkins-build]
+    depends_on:
+      jenkins: {condition: service_healthy}
+    volumes:
+      - jenkins-agent-secret:/run/depease-agent:ro
+      - jenkins-npm-cache:/home/jenkins/.npm
+      - jenkins-pip-cache:/home/jenkins/.cache/pip
+    environment:
+      JENKINS_URL: http://jenkins:8080
+      JENKINS_AGENT_NAME: depease-dev
+      JENKINS_WEB_SOCKET: "true"
+      JENKINS_AGENT_WORKDIR: /home/jenkins/agent
+      JENKINS_JAVA_OPTS: -Xms64m -Xmx256m
+    entrypoint: [sh, -c, "export JENKINS_SECRET=$$(cat /run/depease-agent/agent-secret); exec /usr/local/bin/jenkins-agent"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+
+  bridge:
+    restart: unless-stopped
+    networks: [default, jenkins-control]
+    depends_on:
+      jenkins: {condition: service_healthy}
+    group_add: ["1000"]
+    volumes: [jenkins-api:/run/depease-api:ro]
+    environment:
+      JENKINS_URL: http://jenkins:8080
+      JENKINS_USER: depease-service
+      JENKINS_API_TOKEN: ""
+      JENKINS_API_TOKEN_FILE: /run/depease-api/api-token
+
+networks:
+  jenkins-control:
+  jenkins-build:
+
+volumes:
+  jenkins-home:
+  jenkins-api:
+  jenkins-agent-secret:
+  jenkins-npm-cache:
+  jenkins-pip-cache:

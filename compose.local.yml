@@ -57,6 +57,7 @@ services:
       SMTP_FROM: ${SMTP_FROM:-}
       JENKINS_BRIDGE_URL: http://bridge:5000
       JENKINS_BRIDGE_TOKEN: ${JENKINS_BRIDGE_TOKEN:-}
+      JENKINS_PUBLIC_URL: ${JENKINS_PUBLIC_URL:-}
 
   frontend:
     image: depease-frontend:local

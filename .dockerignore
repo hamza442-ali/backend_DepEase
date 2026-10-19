@@ -12,3 +12,4 @@ tests
 *.local.json
 **/__pycache__
 jenkinsScript
+jenkins-local
