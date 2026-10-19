@@ -92,7 +92,7 @@ test('login throttling isolates clients and resets after the time window', () =>
 
 test('deleting a missing record returns 404; database failures reach error middleware', async () => {
   let forwarded;
-  await crud({ findByIdAndDelete: async () => null }, 'Task').remove()({ params: { id: 'missing' } }, response(), error => { forwarded = error; });
+  await crud({ findById: async () => null }, 'Task').remove()({ params: { id: 'missing' } }, response(), error => { forwarded = error; });
   assert.equal(forwarded.status, 404);
   const databaseError = new Error('database offline');
   await crud({ find: async () => { throw databaseError; } }, 'Task').list()({}, response(), error => { forwarded = error; });

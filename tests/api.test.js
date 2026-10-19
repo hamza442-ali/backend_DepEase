@@ -16,6 +16,7 @@ test('all models and route modules load together without collisions', () => {
 });
 
 test('HTTP compatibility, health, validation and access controls work without opening a database', async t => {
+  for (const name of ['student', 'teacher']) t.mock.method(require(`../src/models/${name}.model`), 'findById', async () => ({ email: 'user@example.com' }));
   const server = createApp(config).listen(0, '127.0.0.1');
   await new Promise(resolve => server.once('listening', resolve));
   t.after(() => new Promise(resolve => server.close(resolve)));

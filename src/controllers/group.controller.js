@@ -2,6 +2,7 @@ const Group = require('../models/group.model');
 const { createCrudHandlers } = require('./crud-handlers');
 const { asyncHandler } = require('../utils/async-handler');
 const { HttpError } = require('../errors/http-error');
+const access = require('../services/project-access.service');
 const handlers = createCrudHandlers(Group, 'Group');
 
 exports.createGroup = handlers.create((req) => {
@@ -18,6 +19,7 @@ exports.getGroupByMatching = asyncHandler(async (req, res) => {
   const group = handlers.requireRecord(
     await Group.findOne({ $or: [{ teamLeadId: id }, { teammate1Id: id }, { teammate2Id: id }] }),
   );
+  await access.authorizeRecord(Group, req, group);
   res.json({ _id: group._id });
 });
 exports.getGroupById = handlers.get();

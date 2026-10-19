@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const panelSchema = new Schema({
-  id: String,
+  id: { type: String, required: true, unique: true, trim: true },
   teachers: [
     {
       employeeId: String,

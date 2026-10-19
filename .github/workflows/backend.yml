@@ -6,26 +6,27 @@ jobs:
   node:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    services:
-      mongo:
-        image: mongo:7
-        ports: ['27017:27017']
-        options: >-
-          --health-cmd "mongosh --quiet --eval 'db.runCommand({ping:1}).ok'"
-          --health-interval 10s --health-timeout 5s --health-retries 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+      - name: Start transactional test database
+        run: |
+          docker run -d --name depease-test-mongo -p 127.0.0.1:27017:27017 mongo:7 --replSet rs0 --bind_ip_all
+          for attempt in $(seq 1 30); do
+            docker exec depease-test-mongo mongosh --quiet --eval 'db.runCommand({ping:1}).ok' && break
+            sleep 1
+          done
+          docker exec depease-test-mongo mongosh --quiet --eval "rs.initiate({_id:'rs0',members:[{_id:0,host:'localhost:27017'}]}); let n=0; while(!db.hello().isWritablePrimary && n++<120) sleep(500); if(!db.hello().isWritablePrimary) quit(1)"
       - run: npm ci
       - run: npm run check
       - run: npm run format:check
       - run: npm test
       - run: npm run test:integration
         env:
-          TEST_MONGODB_URI: mongodb://127.0.0.1:27017/depease_test
+          TEST_MONGODB_URI: mongodb://127.0.0.1:27017/depease_test?directConnection=true
       - run: docker build -t depease-backend:test .
   bridge:
     runs-on: ubuntu-latest

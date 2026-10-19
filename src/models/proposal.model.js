@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const proposalSchema = new mongoose.Schema({
+  ownerId: { type: String, immutable: true, index: true },
   title: {
     type: String,
     required: true,

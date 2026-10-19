@@ -2,8 +2,7 @@ const email = require('../services/email.service');
 const { asyncHandler } = require('../utils/async-handler');
 
 exports.sendEmail = asyncHandler(async (req, res) => {
-  await email.sendEmail(req.user.email, req.body);
-  res.json({ message: 'Email sent successfully' });
+  res.json(await email.sendEmail(req.user.email, req.body));
 });
 
 exports.getEmailsSentByUser = asyncHandler(async (req, res) => {

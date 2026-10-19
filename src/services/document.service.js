@@ -1,5 +1,5 @@
 const Document = require('../models/document.model');
-const storage = require('../integrations/cloudinary/storage');
+const storage = require('../integrations/documents/storage');
 const { HttpError } = require('../errors/http-error');
 
 async function uploadDocument({ buffer, filename, projectId }) {
@@ -7,6 +7,8 @@ async function uploadDocument({ buffer, filename, projectId }) {
   if (
     typeof filename !== 'string' ||
     !filename.trim() ||
+    filename.length > 200 ||
+    /[\x00-\x1f\x7f]/.test(filename) ||
     typeof projectId !== 'string' ||
     !projectId.trim()
   ) {
@@ -21,10 +23,11 @@ async function uploadDocument({ buffer, filename, projectId }) {
       filename,
       ProjectId: projectId,
       resource_type: uploaded.resource_type,
+      provider: uploaded.provider,
     });
   } catch (error) {
     try {
-      await storage.deleteDocument(uploaded.public_id, uploaded.resource_type);
+      await storage.deleteDocument(uploaded.public_id, uploaded.resource_type, uploaded.provider);
     } catch {
       console.error('Failed to clean up a document upload');
     }
@@ -39,6 +42,7 @@ async function deleteDocument(id) {
   const result = await storage.deleteDocument(
     document.public_id,
     document.resource_type || 'image',
+    document.provider || 'cloudinary',
   );
   if (!['ok', 'not found'].includes(result.result)) {
     throw new HttpError(502, 'Document deletion failed');

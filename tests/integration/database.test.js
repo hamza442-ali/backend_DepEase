@@ -9,7 +9,7 @@ const Teacher = require('../../model/teacherModel');
 
 test('merged API works with MongoDB: accounts, legacy login upgrade, project modules, and missing records', async t => {
   const uri = process.env.TEST_MONGODB_URI;
-  assert.ok(/^mongodb:\/\/(localhost|127\.0\.0\.1):\d+\/depease_test$/.test(uri || ''),
+  assert.ok(/^mongodb:\/\/(localhost|127\.0\.0\.1):\d+\/depease_test(?:\?directConnection=true)?$/.test(uri || ''),
     'Set TEST_MONGODB_URI to a local mongodb://127.0.0.1:27017/depease_test instance');
   const databaseName = `depease_test_${process.pid}`;
   await mongoose.connect(uri, { dbName: databaseName, serverSelectionTimeoutMS: 10000 });
@@ -54,14 +54,18 @@ test('merged API works with MongoDB: accounts, legacy login upgrade, project mod
   assert.ok((await Student.findById(stored._id).select('+password')).password.startsWith('scrypt$'));
   assert.equal((await request('/student/create', { method: 'POST', token: login.body.token, body: studentData })).status, 403);
 
+  await Student.create([2, 3].map(id => ({ ...studentData, email_address: `student${id}@example.com`, registration_number: `S${id}` })));
+  const group = await request('/group/add', { method: 'POST', token, body: { teamLeadId: 'S1', teammate1Id: 'S2', teammate2Id: 'S3' } });
+  assert.equal(group.status, 201, JSON.stringify(group));
+  const proposal = await require('../../src/models/proposal.model').create({ title: 'API', ProjectType: 'Development', supervisor: 'T1', problemStatement: 'Problem', problemSolution: 'Solution', scope: 'Scope', timeline: ['Now'], technologyUsed: 'Node', modules: ['API'] });
   const project = await request('/project/add', { method: 'POST', token, body: { ProjectId: 'P1', batch: 2026, semester: 1,
-    teacher: 'T1', group: 'G1', projectProposal: 'proposal-1' } });
+    teacher: 'T1', group: group.body._id, projectProposal: String(proposal._id) } });
   assert.equal(project.status, 201);
   assert.equal((await request('/projects/getall', { token })).body.length, 1);
   const module = await request('/modules/add', { method: 'POST', token, body: { projectId: 'P1', name: 'API', details: 'Build API' } });
   assert.equal(module.status, 201);
   assert.equal((await request(`/modules/update/${module.body._id}`, { method: 'PUT', token, body: { status: 'invalid' } })).status, 400);
-  const panel = await request('/panel/createPanel', { method: 'POST', token, body: { id: 'panel-1', teachers: [] } });
+  const panel = await request('/panel/createPanel', { method: 'POST', token, body: { id: 'panel-1', teachers: [{ employeeId: 'T1', panelHead: true }] } });
   assert.equal(panel.status, 201);
   assert.equal((await request('/panel/deletePanelbyID/missing', { method: 'DELETE', token })).status, 404);
   assert.equal((await request('/panel/getAllPanels', { token })).body.length, 1);

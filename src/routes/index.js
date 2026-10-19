@@ -36,6 +36,22 @@ const featureRoutes = [
 ];
 
 function registerRoutes(app, authenticate) {
+  app.get('/workspace/capabilities', authenticate, (req, res) =>
+    res.json({
+      documents: { storage: process.env.DOCUMENT_STORAGE || 'local' },
+      messages: {
+        internal: true,
+        emailConfigured: ['SMTP_HOST', 'SMTP_USER', 'SMTP_PASSWORD', 'SMTP_FROM'].every((key) =>
+          Boolean(process.env[key]),
+        ),
+      },
+      deployments: {
+        configured: Boolean(
+          process.env.JENKINS_BRIDGE_TOKEN && process.env.JENKINS_BRIDGE_TOKEN.length >= 32,
+        ),
+      },
+    }),
+  );
   for (const { paths, router, roles } of featureRoutes) {
     const middleware = roles ? [authenticate, requireRoles(...roles)] : [authenticate];
     for (const routePath of paths) app.use(routePath, ...middleware, router);

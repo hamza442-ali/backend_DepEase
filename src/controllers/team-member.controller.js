@@ -1,14 +1,16 @@
 const TeamMember = require('../models/team-member.model');
 const { createCrudHandlers } = require('./crud-handlers');
 const { asyncHandler } = require('../utils/async-handler');
+const access = require('../services/project-access.service');
 const handlers = createCrudHandlers(TeamMember, 'Team member');
 
 exports.addTeamMember = asyncHandler(async (req, res) => {
-  await TeamMember.create(req.body);
+  await TeamMember.create(await access.prepareCreate(TeamMember, req, req.body));
   res.status(200).json({ message: 'Team member added successfully' });
 });
 exports.deleteTeamMember = asyncHandler(async (req, res) => {
   const { projectid, student_id } = req.params;
+  await access.projectAccess(req, projectid, { write: true });
   handlers.requireRecord(await TeamMember.findOneAndDelete({ projectid, student_id }));
   res.json({ message: 'Team member deleted successfully' });
 });

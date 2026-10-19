@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const emailSchema = new mongoose.Schema({
+  deliveryStatus: { type: String, enum: ['internal', 'sent', 'failed'], default: 'sent' },
   sender: {
     type: String,
     required: true,
