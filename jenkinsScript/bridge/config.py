@@ -1,5 +1,6 @@
 """Read bridge settings without exposing environment values in errors."""
 import os
+from pathlib import Path
 from dataclasses import dataclass
 from urllib.parse import urlparse
 
@@ -22,6 +23,11 @@ def load_jenkins_settings():
     url = os.environ.get('JENKINS_URL', '').rstrip('/')
     username = os.environ.get('JENKINS_USER')
     token = os.environ.get('JENKINS_API_TOKEN')
+    if not token and os.environ.get('JENKINS_API_TOKEN_FILE'):
+        try:
+            token = Path(os.environ['JENKINS_API_TOKEN_FILE']).read_text().strip()
+        except OSError as error:
+            raise BridgeError('Jenkins credentials are not ready', 503) from error
     if not url or not username or not token:
         raise BridgeError('Jenkins is not configured', 503)
 

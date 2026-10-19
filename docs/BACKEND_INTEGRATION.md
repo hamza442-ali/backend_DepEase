@@ -22,24 +22,25 @@ The Hamza history and the Abdullah/Mahad history have different roots. Integrati
 - Add upload compensation, safer deletion ordering, SMTP configuration and private Jenkins bridge authentication. Jenkins builds follow the actual queue item and use bounded polling.
 - Replace colliding `DockerFile` / `Dockerfile` paths with one Dockerfile, use a non-root runtime, and add health endpoints, setup documentation and CI.
 
-## Current refactor status
+## Product fixes and compatibility
 
-The clean-code refactor is delivered in separate commits on `refactor/backend-clean-architecture` and then merged into `main`. Hamza, Mahad, Abdullah, and existing patch branches are retained. GitHub access is available and pushes are performed through the existing origin remote.
+The contributor histories remain intact. The frontend now uses the unified bearer-token API and role-aware workspace. Project membership is enforced by `src/services/project-access.service.js` for both route aliases and child records. Student access comes from registered group membership; supervisors manage their projects; assigned panel members can review and grade but cannot change project work. Administrative APIs require the admin role. The configured product administrator is `admin@hamza.com`; other teacher accounts cannot access the admin portal.
 
-Local functional test runs are deferred for this structural refactor at the user's request. The earlier integration passed its baseline Node unit/API tests before this deferral; that does not establish a test pass for the subsequent refactor. Static import/syntax and formatting checks are kept separate from functional verification. GitHub Actions continues to run automatically on pushed commits.
+Proposal submission uses one transactional, idempotent `/projects/submit-proposal` operation. The legacy group/proposal/project endpoints remain, with validated ownership and server-controlled fields. Panel rename/delete updates assignments transactionally. Marks use template bounds and preserve evaluator ownership when an administrator edits feedback. Resource approvals are restricted to the responsible role.
 
-## Before deployment
+Deleting a project now archives it and removes panel assignments. Its public identifier remains reserved permanently, preventing another team from inheriting retained documents or tasks. Archived workspaces disappear from normal project lists and child access is closed. Historical orphan child records also reserve their identifiers. An administrator can create a new workspace with a new identifier and existing group/proposal references; archival does not erase academic records or release group enrollment.
 
-1. Rotate MongoDB, SMTP, Cloudinary and Jenkins credentials that appeared in the old sources or tracked environment file. They remain in historical commits. Use a new JWT secret and bridge token. History cleanup, if desired, needs coordination with all collaborators and is not part of this merge.
-2. Run all CI checks and live smoke tests against staging. Configure the admin teacher allowlist and create/reset accounts as described in the README. Existing browser sessions must sign in again.
-3. Update the frontend's admin authentication and API client to send bearer tokens on Hamza's formerly open routes. Preserve the teacher-list path casing noted in the README. This backend change does not update either frontend branch.
-4. Complete project-level authorization: several legacy project, task, resource, document, proposal and team routes still accept project IDs from any authenticated user. The new role guards do not establish team ownership across these models. Define student, team lead, supervisor, panel and admin permissions before exposing the merged service to untrusted users.
-5. Audit and upgrade npm dependencies with a regenerated lockfile and regression runs. The original Node dependency versions are intentionally retained to keep dependency upgrades separate from the structural refactor; this refactor is not a dependency vulnerability clearance.
-6. Use isolated Jenkins agents with restricted IAM/network permissions for repository-controlled Jenkinsfiles. The bridge authenticates calls; it does not sandbox build code. Add durable build-status tracking and recovery for builds exceeding the synchronous polling window.
-7. Add transactional handling for multi-document panel renames, persisted job operations, pagination and database indexes after checking existing data. The in-process login limiter needs a shared store and correctly configured proxy trust when deploying multiple API replicas.
+Local documents are private, persistent files; legacy Cloudinary records keep their original provider. Messages between registered users persist in the in-app inbox even when SMTP is absent or unavailable. External recipients require SMTP. Jenkins stays visibly unavailable until a bridge token is configured; credentials alone do not prove connectivity.
 
-## Next repository work
+The dependency lockfiles have been upgraded and dedicated MongoDB integration regressions cover cross-project requests, ownership spoofing, role boundaries, rollback/retry behavior, uploads, internal delivery, and panel cleanup. CI runs a MongoDB replica set for these tests. The local functional-test deferral from the earlier structural refactor has ended.
 
-The frontend main branch also contains a placeholder. Compare and consolidate its three contributor branches, unify API configuration/auth state, remove hard-coded localhost URLs, redesign role-specific navigation and forms, add loading/error/empty states, and test complete workflows against this API.
+## Existing installations and deployment
 
-The separate infrastructure repository contains a tracked Terraform state file and an older demonstration application. Review its real deployment target, move state to an appropriate backend, inspect secret handling, and align its Docker/Jenkins/Terraform pipeline with the consolidated backend and frontend. Keep these as separate repository integrations unless a monorepo is explicitly chosen.
+1. Back up MongoDB and uploads before rollout. Preserve collection names and legacy import aliases. Unlinked historical proposals without a provable owner remain administrator-only; do not infer an owner from client input.
+2. Check existing panel IDs and group enrollment for duplicates before creating indexes. Startup fails instead of serving without critical uniqueness constraints. Historical group rows without the derived `members` array remain readable; enrollment writes also check all three legacy registration fields.
+3. Set `ADMIN_EMAILS=admin@hamza.com`, create/reset that account using the README operator commands, and sign in again. Never assign administrator rights through a browser-selected role.
+4. Rotate credentials exposed in historical sources or tracked environment files. Historical commits and contributor branches are retained. Use fresh application and bridge secrets for a real deployment.
+5. Configure and exercise real SMTP, Cloudinary (if selected), and the chosen publishing target separately. Local Jenkins now includes a separate agent and durable queue/build tracking. Builds resume status after the page or API restarts; publishing requires a repository-specific deployment stage.
+6. The login limiter is process-local. A multi-replica deployment needs a shared limiter and an explicit trusted-proxy configuration. Configure HTTPS, backups, monitoring, and the actual frontend/API origins for the chosen hosting target.
+
+The `depEase_Jenkins` repository remains separate and contains older demonstration/infrastructure files. It is not used by the tested local product stack. A real infrastructure rollout requires its deployment target and state configuration to be supplied.

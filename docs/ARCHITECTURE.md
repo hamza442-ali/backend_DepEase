@@ -58,8 +58,10 @@ flowchart LR
 
 `jenkinsScript/jenkins.py` remains the Gunicorn entry point. `jenkinsScript/bridge/app.py` builds the Flask application. Configuration, bridge authentication, request validation, HTTP transport, XML generation, and job orchestration each have a dedicated module. Queue tracking and completed-build processing are separate functions. HTTP paths and response formats stay compatible.
 
-## Refactor scope
+## Current product boundaries
 
-The structural refactor keeps the existing dependency versions, database fields, validation rules, access policies, and feature endpoints. Prettier is a development dependency. No database migrations, production deployments, credential rotation, or frontend changes are performed by this refactor. Functional testing is deferred to the final testing phase requested by the user.
+The initial structural refactor preserved collection names and contributor compatibility imports. Subsequent product fixes add project authorization, transactional proposal submission and panel operations, private local document storage, internal message delivery, project archival, and dependency upgrades. Authorization lives in `src/services/project-access.service.js`; common CRUD and specialized handlers call it before data/provider side effects. It receives the authenticated account and trusted role from middleware.
 
-All contributor branches are retained. Refactor commits are published in chunks on `refactor/backend-clean-architecture` before integration into `main`.
+Project business identifiers and MongoDB record identifiers are selected explicitly by callers. Enrollment and submission keys use database uniqueness constraints. Child records cannot be moved between projects with general updates. Archived project identifiers remain reserved to prevent retained records from being adopted by a new team.
+
+Application checks, MongoDB integration regressions, and browser workflow verification are enabled. All contributor branches are retained. See the README for the complete local stack and deployment configuration.

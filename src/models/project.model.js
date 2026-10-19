@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 
 const projectSchema = new mongoose.Schema({
+  retiredAt: { type: Date },
+  submissionKey: { type: String, immutable: true, unique: true, sparse: true },
+  submissionHash: { type: String, immutable: true },
   ProjectId: {
     type: String,
     required: true,

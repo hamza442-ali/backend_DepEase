@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const groupSchema = new Schema({
+  members: { type: [String], default: undefined, index: { unique: true, sparse: true } },
   teamLeadId: {
     type: String,
     required: true,

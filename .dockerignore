@@ -1,4 +1,6 @@
 .git
+.local
+data
 .env
 .env.*
 !.env.example
@@ -10,3 +12,4 @@ tests
 *.local.json
 **/__pycache__
 jenkinsScript
+jenkins-local

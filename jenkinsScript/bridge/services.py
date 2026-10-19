@@ -6,7 +6,7 @@ from .client import call, create_client
 from .config import BUILD_WAIT_SECONDS, POLL_INTERVAL_SECONDS
 from .errors import BridgeError
 from .job_config import pipeline_xml
-from .validation import job_payload, validate_repository
+from .validation import job_payload, validate_repository, scm_options
 
 QUEUE_LOCATION = re.compile(r'/queue/item/(\d+)/?$')
 
@@ -21,11 +21,19 @@ def login():
 def create_job(input_data):
     data, name = job_payload(input_data)
     repository = validate_repository(data.get('git_repo_url'))
+    branch, script_path, owner = scm_options(data)
     url, session = create_client()
     with session:
+        if owner:
+            existing = call(session, 'GET', f'{url}/job/{name}/api/json', accepted_statuses=(200, 404),
+                            params={'tree': 'description'})
+            if existing.status_code == 200:
+                if existing.json().get('description') == f'Managed by DepEase: {owner}':
+                    return {'message': 'Pipeline job is ready'}
+                raise BridgeError('This job belongs to another pipeline', 409)
         call(
             session, 'POST', url + '/createItem', params={'name': name},
-            data=pipeline_xml(repository).encode(),
+            data=pipeline_xml(repository, branch, script_path, owner).encode(),
             headers={'Content-Type': 'application/xml'},
         )
     return {'message': 'Pipeline job created successfully'}
@@ -95,9 +103,16 @@ def build_pipeline(input_data):
 
 
 def delete_pipeline(input_data):
-    _, name = job_payload(input_data)
+    data, name = job_payload(input_data)
+    _, _, owner = scm_options(data)
     url, session = create_client()
     with session:
+        existing = call(session, 'GET', f'{url}/job/{name}/api/json', accepted_statuses=(200, 404),
+                        params={'tree': 'description'})
+        if existing.status_code == 404:
+            return {'message': 'Job already removed'}
+        if owner and existing.json().get('description') != f'Managed by DepEase: {owner}':
+            return {'message': 'Configuration removed; unrelated Jenkins job retained'}
         call(
             session, 'POST', f'{url}/job/{name}/doDelete',
             accepted_statuses=(200, 201, 204, 302, 303),

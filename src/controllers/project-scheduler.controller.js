@@ -9,5 +9,12 @@ exports.createScheduler = handlers.create((req) => {
 });
 exports.getAllSchedulers = handlers.list();
 exports.getSchedulerById = handlers.get();
-exports.updateSchedulerById = handlers.update();
+exports.updateSchedulerById = handlers.update(
+  (req) => req.params.id,
+  async (req) => {
+    const existing = handlers.requireRecord(await ProjectScheduler.findById(req.params.id));
+    dateRange(req.body.start || existing.start, req.body.end || existing.end);
+    return req.body;
+  },
+);
 exports.deleteSchedulerById = handlers.remove();
